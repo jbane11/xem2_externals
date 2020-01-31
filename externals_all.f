@@ -158,12 +158,11 @@ c           CALL TIME(VTSTART,TTSTART)
      >           E0SET,EPSET,THSET
             if(ipsv.eq.0) goto 100
          else
-           READ(7,'(F6.3,1x,F6.4,1x,F7.4)',END=100) E0SET,EPSET,THSET
-
+           READ(7,*,END=100) E0SET,EPSET,THSET
+c          format for above read statement = '(F6.3,1x,F6.4,1x,F6.4)'
            IF (E0SET.LE.0.) GOTO 100
          endif
 C          CALL INTERPOL(E0SET,EPSET,THSET)
-
          TH    = THSET
          THR   = TH*PI/180.
          SIN2  = SIN(THR/2.)**2
@@ -214,7 +213,7 @@ c     CALL  FYXSEC8(E0SET,EPSET,TH,SIGMA_CORR)
 
          SIGMA_BORNPLSQE = SIGMA_BORN+SIGMA_CORR
 
-         dorad=.true.
+         dorad=.false.
          doext=.true.
 
          if(dorad) then
@@ -4776,10 +4775,10 @@ C$$     >   C,sum/cross
 !* If A>2 and doing Anje fit, only use F2ALL
       ReallyJoin=.true.
       if(IA.gt.2.and.DIS_MODEL.EQ.6) ReallyJoin=.false.
-!* If RES_MODEL and DIS_Model both 6, don't join
+!* If RES_MODEL and DIS_Model both 6, don`t join
       if(RES_MODEL.eq.6.and.DIS_MODEL.EQ.6) ReallyJoin=.false.
 
-!** Don't join if using rock_res9: should be good everywhere
+!** Don`t join if using rock_res9: should be good everywhere
       if(DIS_MODEL.EQ.33) ReallyJoin=.false.
 
       IF(WSQ.GT.3.5.or.(.not.ReallyJoin)) THEN        !DIS
@@ -4814,10 +4813,10 @@ C$$     >   C,sum/cross
           emcfacp=emcfac
           if(ia.eq.12) emcfacp=(0.926-0.400*x-0.0987*exp(-27.714*x)+
      >                 0.257*x**0.247)
-! *** use carbon for Al since Antje's seems to low at high x
+! *** use carbon for Al since Antje`s seems to low at high x
           if(ia.eq.27) emcfacp=(0.926-0.400*x-0.0987*exp(-27.714*x)+
      >                 0.257*x**0.247)
-! *** turn off Antje's Al corr.,
+! *** turn off Antje`s Al corr.,
 !         if(ia.eq.27) emcfacp=(0.825-0.46*x-0.19*exp(-21.8*x)+             !!!ALUMINUM  !!!
 !    >                    (0.34*x**(-4.91))*x**5.0)
           if(ia.eq.65) emcfacp=(1.026-0.56*x-0.34*exp(-45.7*x)+             !!!COPPER   !!!
