@@ -1,9 +1,9 @@
 	subroutine bdisnew4he3(eic1,ep1,theta1,aa1,zz1,ann1,esep1,pmax1,
      &	innt1,innp1,f01,bigB1,ag1,bg1,alpha1,sigdeep)
-        
+
         implicit none
 c	implicit real*8 (a-z)
-	real*8 wp,ww1,ww2, w11, w22, nu,p
+	real*8 wp,ww1,ww2, w11, w22, nu,p, amuM
 	real*8 eic1,ep1,theta1,aa1,zz1,ann1,esep1,pmax1
         real*8  innt1,innp1,ag1,bg1,cg1,dg1,sigdeep
 c	modified version of BWF's routine bdis
@@ -18,7 +18,7 @@ c	which was converted to n(k)
         real*8 innt,innp,ag,bg,f0,BigB,alpha
         real*8 agd,bgd,cgd,dgd
         real*8 theta,pi,s2,anu,q2,amp,x,amp2
-        real*8 amn,ama_1,q3
+        real*8 amn,ama_1,q3,W1_ineft,W2_ineft
         real*8 w1ap,w2ap,w1an,w2an
         real*8 w1ap1,w2ap1,w1an1,w2an1
         real*8 w1,w2,w1a,w2a,sigm,tt2
@@ -31,7 +31,7 @@ c	which was converted to n(k)
 
 
 c	common/interp/npts,nterms,rk(200),rho(200)
-	
+
 c	eic = real(eic1)
 c	ep = real(ep1)
 c	theta = real(theta1)
@@ -63,14 +63,14 @@ c	alpha=real(alpha1)
 	f0 = f01
 	BigB = bigB1
 	alpha=alpha1
-	
+
 	f0=f0*1000
 	bigB=bigB*1000
 	alpha=alpha/1000
 	ag=ag*1000
 	bg=bg*1000
 
-	
+
         if (aa .eq. 3)then       !he3
 	  agd =    0.39167E+01
 	  bgd =    0.78468E+02
@@ -122,8 +122,8 @@ c	esep spearation energy
 c	pmax max p in integration of p > kf
 c	innt integration steps over theta
 c	integration steps over p
-c       
-c       
+c
+c
 c	write(6,*)'E,EP,THETA, A, ZZ,ANN,ESP,PMAX,INNT,INNp,ag,bg,bigB, f0, alpha'
 c	write(6,*)eic,ep,theta,aa,zz,ann,esep,pmax,innt,innp,ag,bg,bigB,
 c	1 f0, alpha
@@ -134,7 +134,7 @@ c	1 f0, alpha
 	s2 = sin(theta/2.)**2
 	anu = eic - ep
 	q2 = 4.*eic*ep*s2
-	
+
 c	write (6,*) 'in bdis, got q2 of ', q2
 	rq2=q2		! to pass to w1w2
 c	write(6,*)eic,ep,thec,esep,q2, rq2,
@@ -143,7 +143,7 @@ c	write(6,*)eic,ep,thec,esep,q2, rq2,
 	amp = 0.938273
 	x = q2/2./amp/(eic-ep)
 	amp2 = amp*amp
-	amn = 0.939565 
+	amn = 0.939565
 	if(aa.eq.2) then
 	  ama_1=0.93827
 	elseif(aa .gt. 2 .and. aa .lt. 4)then !he3
@@ -165,7 +165,7 @@ c	elseif (aa.eq.63) then
 	  ama_1 = 182.5394
 	endif
 	ama = ama_1 + amp - esep
-c	write (6,*) 'ama_1 is ', ama_1
+c	write (6,*) 'ama_1 is ', ama_1,ama
 c
 	q3 = sqrt(q2 +anu*anu)
 	w1ap = 0.0
@@ -194,7 +194,7 @@ c	do smearing correction
 	  w2ap1 = 0.0
 	  w1an1 = 0.0
 	  w2an1 = 0.0
-	  
+
 	  do 10 iu = 1,innt
 
 	    u = (iu - .5)*du
@@ -203,16 +203,16 @@ c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c	i removed this dependence on kf 12/4/87 just to see the
 c	effect
 c       if(p.le.akf)then
-c       
+c
 	    ei = ama - sqrt(p*p+ama_1*ama_1)
-c       
+c
 c       else
 c       ei = amd - sqrt(p*p + amp**2)
 c       endif
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	    anup = (ei*anu - p*u*q3)/amp
 c	note that w1 and w2 are zero if wp < M + mpi
-c	
+c
 	    wpmin2 = (amp + .135)**2
 cdg	    if (iu.eq.1) then
 c       write (6,*)'This is ', this
@@ -233,6 +233,8 @@ cdg	    endif
 	    nu = (wp**2 - amp**2 + q2) / 2. / amp
 c	    write(*,*) 'my nu is ', nu, wp**2, q2, rq2
 cdg	    call w1w2(rq2,wp,w1,w2,inp)
+
+c Get F1,F2 for the proton at Q2 and w2
 	    call F1F2IN06(1.D0,1.D0,rq2,wp**2,w11,w22)
 c	    call F1F2IN09(1.D0,1.D0,rq2,wp**2,w11,w22,r)
 	    if((w11.eq.0).or.(w22.eq.0)) goto 10
@@ -241,6 +243,14 @@ c	    call F1F2IN09(1.D0,1.D0,rq2,wp**2,w11,w22,r)
 
 	    w1=w11
 	    w2=w22
+			W1_ineft=0.0
+			W2_ineft=0.0
+c write (6,*) 'ama_1 is ', ama_1,ama,Q2
+
+c			call INEFT(Q2,W1_ineft,W2_ineft,ama)
+
+c			write(6,*)"poo ", W1_ineft, W1, W2_ineft, W2, x,ama
+
 
 	    if (wp .gt. wp_max) wp_max = wp
 
@@ -252,7 +262,7 @@ c       errorinBR	arg21 = (1. - p*u*q2/amp/anup/q3)*anup*anup/anu/anu
 	    w1ap1 = w1ap1 + arg1*du
 	    w2ap1 = w2ap1 + arg2*du
 	    inp = 2
-cdg	    call w1w2(rq2,wp,w1,w2,inp)	    
+cdg	    call w1w2(rq2,wp,w1,w2,inp)
 	    w11=0.
 	    w22=0.
 	    call F1F2IN06(0.D0,1.D0,rq2,wp**2,w11,w22)
@@ -271,7 +281,7 @@ c       errorinBR	arg21 = (1. - p*u*q2/amp/anup/q3)*anup*anup/anu/anu
 	    arg2 = w2*(arg21 + arg22)
 	    w1an1 = w1an1 + arg1*du
 	    w2an1 = w2an1 + arg2*du
-c       
+c
  10	  continue
 
 
@@ -280,7 +290,7 @@ c
 	1   *(alpha**2+p**2)+1)/(alpha**2+p**2)**2))
 
 
-	  
+
 	  if (aa.eq.2) then
 	    if(p.lt.0) then
 	      weight1=weight1-(bg*bigB*exp(-bg*abs(p))/(2*p))
@@ -296,15 +306,15 @@ c
 
 	  weight2 = (agd*bgd/pi*exp(-bgd*p**2) + cgd*dgd/pi*exp(-dgd*p
 	1   **2) )*p*p*dp
-	  
+
 	  w1ap = w1ap + w1ap1*weight1
 	  w2ap = w2ap + w2ap1*weight1
 	  w1an = w1an + w1an1*weight1
 	  w2an = w2an + w2an1*weight1
 	enddo
-	
+
 	fackf = 2.*pi
-c	
+c
 	w1a = fackf*(zz*w1ap + ann*w1an)
 	w2a = fackf*(zz*w2ap + ann*w2an)
 
@@ -319,4 +329,3 @@ c	write(50,*)x,q2,wp_max
 
 	return
 	end
-	

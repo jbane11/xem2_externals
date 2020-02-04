@@ -1,6 +1,6 @@
 	subroutine sigmodel_calc(e1pass,e2pass,thpass,zpass,apass,mpass,sig_dis_pass,sig_qe_pass,sig,xflag,factpass)
 C       +______________________________________________________________________________
-c	
+c
 c       Subroutine to compute model unradiated cross section from a combination
 c       of Y-scaling and deep inelastic models. The DEEPSIG model can be smeared
 c       with a gaussian in missing mass squared of width RESOL$ (one sigma).
@@ -8,9 +8,9 @@ c       If SMEAR$ is .TRUE., such smearing will occur. If SMEAR$ is .FALSE.,
 c       smearing is suppresed. It should be noted that the smearing involves
 c       computing a convolution integral, which significantly slows down
 c       this subroutine!
-c       
+c
 c       ARGUMENTS:
-c       
+c
 c       E1:		-	Incident energy in GeV.
 c       E2:		- Scattered energy in GeV.
 c       TH:		- Scattering angle in Degrees.
@@ -37,12 +37,12 @@ C       Declare arguments.
 C       Declare locals.
 
 	real*8	 	sig_qe,sig_dis,y,normfac,fact
-        real*8		thr,cs,sn,tn,elastic_peak
+        real*8		thr,cs,sn,tn,elastic_peak, amuM
 	real*8          Q2,nu,WSQ, x, pmax,nn
         real*8          ld2_a,ld2_z,ld2_nn,ld2_aux(7),ld2_sig_dis
         real*8          emc_corr,ld2_inta
         real*8          x1,x2,sig_dis_emc,sig_donal,sig_dis_donal
-	real*8          F1,F2,W1,W2,sigmott
+	real*8          F1,F2,W1,W2,sigmott,W1_ineft,W2_ineft
         real*8          frac,corfac
 	real*8          dum0,dum1,dum2,dum3,dum4,dum5,m_atom
 	real*8          ff1,deltae,e1cc,e2cc
@@ -78,14 +78,15 @@ C First - redefine energies
 
 c	deltae = 0.0102
 	deltae=0.0
-	
+
 	ff1 = (e1+deltae)/e1
 
 	e1cc = e1 + deltae
 	e2cc = e2 + deltae
 
 
-c	write(6,*) 'in sigmodel_calc',e1,e2,th,z,a,m_tgt,xflag
+c
+
 	if(first) then
 	   first=.false.
 C  Here, all we're concerned about are the aux parameters
@@ -182,10 +183,10 @@ c	      dd = 0.0698843279899779
 	      m_atom=55.8470
 	   elseif(a.eq.64) then
 	      m_atom=63.546
-c	      aa= 0.668888        
-c	      bb = 0.336285        
-c	      cc = 0.00192735     
-c	      dd= -0.00481499   
+c	      aa= 0.668888
+c	      bb = 0.336285
+c	      cc = 0.00192735
+c	      dd= -0.00481499
 
 	      bb = 0.041323394008416
 	      cc = 0.00447016532137148
@@ -193,19 +194,19 @@ c	      dd= -0.00481499
 	      aa = 1.00675406673173
 	   else if (a.eq.197) then
 	      m_atom=196.9665
-c	      aa = 0.735285        
-c	      bb = 0.309688       
-c	      cc  = -0.000453334   
-c	      dd  = 0.00294095      
+c	      aa = 0.735285
+c	      bb = 0.309688
+c	      cc  = -0.000453334
+c	      dd  = 0.00294095
 	      bb = 0.0667337559531751
 	      cc = 0.00448892579200859
 	      dd = -0.0334460588480325
 	      aa = 0.981274819686673
 	   else
-	      write(6,*) 'CANT FIGURE OUT M_ATOM.' 
+	      write(6,*) 'CANT FIGURE OUT M_ATOM.'
               write(6,*) 'GET RID OF THIS CRAP!!'
 	   endif
-	   
+
 	endif
 
 	sig =0.0
@@ -224,9 +225,10 @@ c	write(6,*) 'got to 1'
 
 	Q2 = 4.*e1cc*e2cc*sn**2
 	nu=e1cc-e2cc
-	WSQ = -Q2 + m_p**2 + 2.0*m_p*nu 
+	WSQ = -Q2 + m_p**2 + 2.0*m_p*nu
         x = Q2/2/m_p/nu
 
+c	write(6,*) 'in sigmodel_calc',e1,e2,th,z,a,m_tgt,xflag
 
 c	innt = 30.0
 c	innp = 30.0
@@ -237,8 +239,8 @@ c	innp = 30.0
 
 	pmax=1.0
 
-	
-	
+	amuM = m_atom
+
 
 
 	sig_qe=0.0
@@ -256,16 +258,16 @@ c	innp = 30.0
 	sig_dis=0.0
 	if((xflag.eq.1).or.(xflag.eq.3)) then
 c----------------------------------------------------------------
-c       
+c
 c       do inelastic stuff only for ld2, for nuc targets sig_dis=ld2*emc
-c       for now set all the values  to ld2 
+c       for now set all the values  to ld2
 c       aux is the ld2 qe param  from target_info.f file
 
 
 cccccccccccccccc
 ccc     dont forget to change this  stuff when ld2 qe param changes
 cccccccccccccccc
-	
+
 	   ld2_a=2
 	   ld2_z=1
 	   ld2_nn=1
@@ -280,31 +282,31 @@ cccccccccccccccc
 c--------------------------------------------------------------------
 	   x1=0.8		!x<x1 --> use emc corrected ld2
 	   x2=0.9		!x1<=x<x2 --> smooth transition from emc corrected ld2 to donals smearing
-				!x>=x2  --> donal's smearing
+				!x>=x2  --> donal`s smearing
 
 	   if(a.ge.2) then
 
 	      if(WSQ.lt.2.25) then
-		 innt=30
-		 innp=30
+		 			innt=30
+		 			innp=30
 	      else
-		 innt=30
-		 innp=10
+		 			innt=30
+		 			innp=10
 	      endif
-	      
-	      call bdisnew4he3(e1cc,e2cc,th,a, z,nn, epsn(inta), 
-	1	   pmax, innp, innt,  aux(3),aux(4), aux(5), 
+
+	      call bdisnew4he3(e1cc,e2cc,th,a, z,nn, epsn(inta),
+	1	   pmax, innp, innt,  aux(3),aux(4), aux(5),
 	2	   aux(6),aux(7),sig_donal)
 
 c	      write(6,*) 'back from bdisnew',sig_donal
 
 	      if (x.lt.x1) then
-		 emc_corr = emc_func_xem(x,a)
-	      elseif ((x.ge.x1).and.(x.lt.x2)) then 
-		 frac = (x-x1)/(x2-x1)
-		 emc_corr = 1.0*frac + emc_func_xem(x,a)*(1.-frac) 
+		 			emc_corr = emc_func_xem(x,a)
+	      elseif ((x.ge.x1).and.(x.lt.x2)) then
+		 			frac = (x-x1)/(x2-x1)
+		 			emc_corr = 1.0*frac + emc_func_xem(x,a)*(1.-frac)
 	      elseif(x.ge.x2) then
-		 emc_corr = 1.0
+		 			emc_corr = 1.0
 	      endif
 
 	      sig_dis_donal=sig_donal*emc_corr
@@ -316,6 +318,9 @@ c	      call F1F2IN09(Z, A, Q2, WSQ, F1, F2,r)
 C       Convert F1,F2 to W1,W2
 	      W1 = F1/m_p
 	      W2 = F2/nu
+				call INEFT(Q2,W1_ineft,W2_ineft,amuM)
+
+				write(6,*)"poo ", W1_ineft, W1, W2_ineft, W2, x
 
 
 C       Mott cross section
@@ -355,25 +360,25 @@ c	   sigmott=(19732.0/(2.0*137.0388*e1*sn**2))**2*cs**2/1.d6
 c	   sig_dis = 1.d3*sigmott*(W2+2.0*W1*tn**2)
 cC END simple model
 
-	endif
+	   endif
 
 c    do a high x tweak for the inelastic part of nuc targets
-	   if ((x.gt.0.9).and.(a.gt.1.5)) then	   
+	   if ((x.gt.0.9).and.(a.gt.1.5)) then
 cdgc	      call  highx_cor(a,x,corfac)
 	      call  dis_highx_cor(a,x,corfac)
-	      sig_dis = sig_dis*corfac	   
+	      sig_dis = sig_dis*corfac
 	   endif
 
 
 	   sig_dis=sig_dis/1.0d3
 	   if (sig_dis.lt.0.) sig_dis=0.0
-	   
+
 	   sig_dis = sig_dis*ff1**2
 
 	endif ! test on xsec type
 	sig = sig_qe + sig_dis
 
-	sig = sig*1000.0 !to be consistent with Peter's units
+	sig = sig*1000.0 !to be consistent with Peter`s units
 
 c	sig=sig_qe
 
@@ -402,9 +407,9 @@ c-------------------------------------------------------------------------------
 	2    +775.767*x**7 - 205.872*x**8
 
 	C = exp( 0.017 + 0.018*log(x) + 0.005*log(x)**2)
-	
+
 	emc_func_slac = C*atemp**alpha
-	return 
+	return
 	end
 
 
@@ -413,17 +418,17 @@ c polynomial fit made to inelastic emc ratios from xem data
 c at low x (x<0.3) the fit is constrained with world data (to get some sort of shadowing behaviour).
 
 C DJG NOTE 7/11/2007
-c Note that although this is called "emc_func", it is really a fit to the ratio of the emc effect to 
+c Note that although this is called "emc_func", it is really a fit to the ratio of the emc effect to
 c a pure smearing claculation. So - this function is applied to the smeared n+p cross section
 c to reproduce the correct emc effect. If you plot these functions, it will not look like
 c the emc effect, so don't panic.
-  
+
 	real*8 function emc_func_xem(x,A) ! now compute the emc effect from our own fits.
 	implicit none
         real*8 x,a,xtmp
 	real*8 emc
-	
-	
+
+
 c	if (x.le.1.0) then
 	if(x.le.0.9) then
 	   xtmp = x
@@ -453,7 +458,7 @@ c	1	   + 4.8120*xtmp**4 - 3.2865*xtmp**5
 C it 3
 	   emc = 0.92170 +1.7544*xtmp -3.7324*xtmp**2 - 0.24293*xtmp**3
 	1	+ 6.7613*xtmp**4 - 4.6089*xtmp**5
-CHe4***********************************************************************************	      
+CHe4***********************************************************************************
 	else if(A.eq.4) then
 C it2
 c            emc = 0.84622 + 2.2462*xtmp - 4.7909*xtmp**2
@@ -472,43 +477,43 @@ C it 3
 C Carbon**********************************************************************************
 	else if(A.eq.12) then
 C it 2
-c         emc = 0.8279 + 3.5070*xtmp -7.5807*xtmp**2 
+c         emc = 0.8279 + 3.5070*xtmp -7.5807*xtmp**2
 c	1	   -0.60935*xtmp**3 +13.081*xtmp**4 -8.5083*xtmp**5
 C it 3
-	   emc = 0.63653 + 4.6458*xtmp -9.2994*xtmp**2 
+	   emc = 0.63653 + 4.6458*xtmp -9.2994*xtmp**2
 	1	-1.2226*xtmp**3 +16.157*xtmp**4 -10.236*xtmp**5
 C Al**********************************************************************************
 	else if(a.eq.27) then
 	   emc = 0.98645 + 3.0385*xtmp - 22.072*xtmp**2 + 74.981*xtmp**3
 	1	- 132.97*xtmp**4 + 113.06*xtmp**5 -35.612*xtmp**6
 C Copper**********************************************************************************
-	else if(A.eq.64) then 
+	else if(A.eq.64) then
 C it 2
 c	      emc = 1.1075 + 2.7709*xtmp - 6.5395*xtmp**2 -0.46848 *xtmp**3
 c	1	   +10.534*xtmp**4 - 6.6257*xtmp**5
 c it 3
 	   emc = 0.58372 + 6.0358*xtmp - 11.988*xtmp**2 -1.0211*xtmp**3
 	1	+18.567*xtmp**4 - 11.482*xtmp**5
-C Gold**********************************************************************************	      
+C Gold**********************************************************************************
 	else if(A.eq.197) then
 C it 2
 c	      emc = 1.1404 + 4.0660*xtmp -10.318*xtmp**2 -1.9036*xtmp**3
-c	1	   + 21.969*xtmp**4 - 14.461*xtmp**5	   
+c	1	   + 21.969*xtmp**4 - 14.461*xtmp**5
 C it 3
 	   emc = 0.44132 + 8.1232*xtmp -16.141*xtmp**2 -5.6562*xtmp**3
 	1	+ 35.606*xtmp**4 - 22.008*xtmp**5
-	      
-	else  
+
+	else
 	   write(*,*) '** in emc_func_xem, unknown target'
-	   stop		
+	   stop
 	endif
-	
+
 	emc_func_xem= emc
 	return
 	end
 
 c-----------------------------------------------------------------------------------------------
-c 
+c
 
 	subroutine highx_cor(anuc,x,cor)
 
@@ -520,7 +525,7 @@ c
 	   elseif (x.ge.1.4) then
 	      cor=0.74
 	   endif
-        
+
         elseif(anuc.eq.4) then
 	   if ((x.gt.0.9).and.(x.lt.1.17)) then
 	      cor= 3.24553 - (3.47244*x) +  (1.11309*x**2)
@@ -574,7 +579,7 @@ c-------------------------------------------------------------------------------
 
 	xlow2=1.3
 	xhigh2=1.4
-	
+
 	frac=1.
 	if(anuc.eq.3) then
 	   cor=-2.12112*x+3.03449
@@ -582,22 +587,22 @@ c-------------------------------------------------------------------------------
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
-        
+
+
 	 elseif(anuc.eq.4) then
 	   cor=-1.76466*x+2.68897
 	   if((x.ge.xlow1).and.(x.le.xhigh1)) then
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
+
 	 elseif(anuc.eq.9) then
 	   cor=-1.8383*x+2.77253
 	   if((x.ge.xlow1).and.(x.le.xhigh1)) then
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
+
 	 elseif(anuc.eq.12) then
 	   cor=-1.32193*x+2.28754
 	   if((x.ge.xlow1).and.(x.le.xhigh1)) then
@@ -623,11 +628,11 @@ c-------------------------------------------------------------------------------
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
+
 	 else
 	   cor=1.
 	 endif
-	 
+
 	 if(cor.lt.0.4) cor=0.4
 
 	return
@@ -645,7 +650,7 @@ c-------------------------------------------------------------------------------
 
 	xlow2=1.9
 	xhigh2=2.0
-	
+
 	frac=1.
 	cor=1.
 
@@ -683,7 +688,7 @@ c-------------------------------------------------------------------------------
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
+
 	 elseif(anuc.eq.12) then
 	   cor=-1.29213*x+ 2.2087
 	   if((x.ge.xlow1).and.(x.le.xhigh1)) then
@@ -710,11 +715,11 @@ c-------------------------------------------------------------------------------
 	     frac = (x-xlow1)/(xhigh1-xlow1)
 	   endif
 	   cor=frac*cor+1.-frac
-	   
+
 	 else
 	   cor=1.
 	 endif
-	 
+
 	 if(cor.lt.0.4) cor=0.4
 
 	return

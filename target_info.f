@@ -73,25 +73,25 @@ C Local declarations.
 
 C Lookup table from which we find the radiation length and AUX parameters.
 C DAVE G NOTE: Stuff for He3,Be,Cu mostly placeholders.
-C I'm going to try and use the parameters from Atti, Faralli, and West 
+C I'm going to try and use the parameters from Atti, Faralli, and West
 C (nucl-th/9812078)
 
 	real*8		lookup(10,10)/			!data vs. Z.
 
-!  From Nadia's iteration: August 2007
+!  From Nadia`s iteration: August 2007
 !-------------------------------------------------------------------------------
 !        H     2H       3He     4He      Be      C       Al     Fe     Cu       Au
 !-------------------------------------------------------------------------------
 !
-     > 1.,        1.,         2.,         2.,        4., 
+     > 1.,        1.,         2.,         2.,        4.,
      > 6.,        13.,    26.,    29.,        79., !Z's
-     > 1.,        2.,         3.,         4.,        9., 
+     > 1.,        2.,         3.,         4.,        9.,
      > 12.,       27.,    56.,    64.,        197., !A's
      > 61.28,       122.6,      71.07,      94.32,     65.19,
      > 42.7,      24.01,  13.84,  12.86,      6.461, !R.L.s in g/cm^2.
-     > 0.00,        0.14,       0.10,       0.16,      0.10,  
+     > 0.00,        0.14,       0.10,       0.16,      0.10,
      > 0.25,      0.25,   0.25,   0.10,       0.25, !RESOL's
-     > 0.00,        0.00225,    0.00549,    0.02020,   0.00928,  
+     > 0.00,        0.00225,    0.00549,    0.02020,   0.00928,
      > 0.01727,   0.0099, 0.01060,0.00855,    0.00693, !E_SEP's in GeV.
      > 0.0056000,  0.00904157, 0.0053094,  0.0040197,  0.0034814,
      > 0.0031822,  0.0032783,  0.0028900,  0.00287403,  0.0026424,    !f0
@@ -101,7 +101,7 @@ C (nucl-th/9812078)
      > 0.0030265,  0.0029698,  0.0031802,  0.0030959,  0.0030654,    !a
      > 0.0000000,  0.0093937, 0.0103492,  0.0074941,  0.0078398,
      > 0.0070505,  0.0065760,  0.0072635,  0.0070945,  0.0067678,    !b
-     > 20.000,    45.384,    64.247,   100.256,   110.967,  
+     > 20.000,    45.384,    64.247,   100.256,   110.967,
      > 137.285,   131.845,   165.700,   132.458,   132.452/   !alpha
 
 
@@ -123,7 +123,7 @@ C Get target specific stuff from lookup table.
 	enddo
 	if (.not.found) then
 	  write(6,*) 'cant find target in lookup table!'
-          return			!Quit if couldn't find info.
+          return			!Quit if couldn`t find info.
 	endif
 
 C Compute TA and TB for target.  Target Chamber windows added at end.
@@ -167,12 +167,12 @@ cdg	  endif
 ! Contribution due to vacuum chamber walls, air, and entrance to spectrometer.
 
 	ta = ta + t_exitwin/X0_cm_Al		!Al exit window.
-     >          + t_air/X0_cm_air 		!air before magnets 
+     >          + t_air/X0_cm_air 		!air before magnets
      >          + t_mylar/X0_cm_mylar		!mylar entrance windows.
      >          + t_kevlar/X0_cm_kevlar		!kevlar entrance windows.
 
 
-	return	
+	return
 
 1001	format(a)
 	end

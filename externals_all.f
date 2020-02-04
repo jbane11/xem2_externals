@@ -32,8 +32,10 @@ C=======================================================================
       COMMON /TARGT/ iZ,iA,avgN,avgA,avgM,amuM
       INTEGER IZ,IA
       REAL AVGN,AVGA,AVGM,AMUM
-      COMMON/IKK12/IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL
-      INTEGER IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL
+      COMMON/IKK12/IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL,
+     >             SIG_MODEL
+      INTEGER IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL,
+     >             SIG_MODEL
       COMMON /TTYPE/ TARGET
       CHARACTER*7    TARGET
       REAL TTOT,TLEN
@@ -147,22 +149,25 @@ c check out pauli supp.
           write(6,'(1x,12f5.2)') e0set,q2set,psf1,psf2
         enddo
       enddo
+c  This is to load tables for f1f217
+c      wfn=2
+c      call SQESUB(1.0,1.0,wfn,f2dqe,f1dqe,fLdqe,dfirst)
+c brought over from Hanjies version, doesnt work yet
 
 c Loop over kinematic points:
-
       npts=0
       DO 99 ii=1,100000
-c           CALL TIME(VTSTART,TTSTART)
+
          if(doeg1b) then
             read(7,'(1x,2i4,2f6.3,F7.3)') ipsv,ithsv,
      >           E0SET,EPSET,THSET
             if(ipsv.eq.0) goto 100
          else
            READ(7,*,END=100) E0SET,EPSET,THSET
-c          format for above read statement = '(F6.3,1x,F6.4,1x,F6.4)'
+C Bane     old format for above read statement = '(F6.3,1x,F6.4,1x,F6.4)'
            IF (E0SET.LE.0.) GOTO 100
          endif
-C          CALL INTERPOL(E0SET,EPSET,THSET)
+
          TH    = THSET
          THR   = TH*PI/180.
          SIN2  = SIN(THR/2.)**2
@@ -172,12 +177,6 @@ C          CALL INTERPOL(E0SET,EPSET,THSET)
          Y     = ANU/E0SET
          EPS   = 1./( 1.+2.*SIN2/(1.-SIN2)*(1.+Q2SET/(2.*PM*X)**2))
          W2    = PM**2+2.*PM*ANU-Q2SET
-c           if(iA.lt.1.5.and.w2.le.1.17) then
-c              write(17,'(1x,5f7.3,5e11.4)') E0set,EPSET,THSET,
-c     >             X,q2set,1.0,10.0,
-c     >             0.0,0.0,0.0
-c              goto 99
-c           endif
          q28 = q2set
          w8 = sqrt(w2)
          npts = npts+1
@@ -376,7 +375,7 @@ c           sfactsv(npts) = qefact
 c --- aji ----------------------------------------------
 c now do Coulomb correction
 
-           doccor=.true.
+           doccor=.false.
 
            if(doccor) then
 cc first get the vertex quantities and do a target dependent
@@ -403,11 +402,15 @@ cc also, all deltae_cc's are computed for Z-1, not Z!/-*
               else
                  ccor=1.0
               endif
+           else
+             ccor=1.0
+
            endif   !doccor
 
 c------------------------------------------------------------------
 c aji the born model with ccor, since we  radiated the model with  Coulombic
 c effect for this version
+
            sbsv(npts)= sbsv(npts)/ccor
            sbisv(npts)= sbisv(npts)/ccor
            sbqesv(npts)= sbqesv(npts)/ccor
@@ -419,6 +422,7 @@ c effect for this version
 
 
 
+C Print outputs to files or stdout
 
            write(17,'(1x,5f9.4,9e13.5)') e0sv(npts),epsv(npts),
      >          thsv(npts),xsv(npts),q2set,sbsv(npts),sbisv(npts),
@@ -462,6 +466,10 @@ cdg      write(16,'(1x,''join dotdash'')')
 
       END
 
+C End of main program
+C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C=======================================================================
 
       REAL*4 FUNCTION CONTINUUM(T)
@@ -1807,7 +1815,7 @@ C=======================================================================
      >        TAFTER=(0.0216-X)/COS(TR)
      >        +0.00011+0.00011/COS(TR)
             ELSE
-              IF(TR.GT.0.671) THEN ! Doesn't hit downstream dummy
+              IF(TR.GT.0.671) THEN ! Doesn`t hit downstream dummy
                IF(X.LE.0.0108)
      >          TAFTER=(0.0108-X)/COS(TR)
      >         +0.00011/COS(TR)
@@ -1892,7 +1900,7 @@ C=======================================================================
       LOGICAL HIT
 
       XNOM=XEFF                       ! Save perpendicular thickness
-      XEFF=0.                         ! Set to 0 in case don't go thru
+      XEFF=0.                         ! Set to 0 in case don`t go thru
       XC=XMAX-A                       ! x of ellipse center
       IF(X .LT. 0.0 .OR. X .GT. XMAX) RETURN  ! Should never happen
       CALL ENDCAP2(X,DY,XC,A,B,TR,X1,Y1,HIT) ! where his endcap or wal
@@ -1900,10 +1908,10 @@ C=======================================================================
       IF(HIT) THEN
         IF(I.EQ.6) THEN                ! Hit the endcap
           IF(Y1.LT.2.60) XNOM=0.0112   ! Put in y-dependence of endcap
-          IF(Y1.GE.2.60.AND.Y1.LT.2.9) XNOM=0.0178  ! based on Peter's m
+          IF(Y1.GE.2.60.AND.Y1.LT.2.9) XNOM=0.0178  ! based on Peter`s m
           IF(Y1.GE.2.90) XNOM=0.0254   ! of an actual endcap.
           CALL ENDCAP2(X,DY,XC,(A+XNOM),(B+XNOM),TR,X2,Y2,HIT)
-          IF(.NOT.HIT) THEN           ! Didn't hit other side of cap!
+          IF(.NOT.HIT) THEN           ! Didn`t hit other side of cap!
             WRITE(6,'(1X,''ERROR IN PASSING ENDCAP'')')
           ELSE
             XEFF=SQRT((X2-X1)**2+(Y2-Y1)**2)
@@ -1918,7 +1926,7 @@ C=======================================================================
         IF(I.EQ.5) THEN        ! Put in rough x dependence of thickness
           XWALL=XMAX-1.3-X     ! TARGPARAM: 1.3 cm is where wall begins
           XWALL=XWALL-(3.2-DY)*COS(TR)/SIN(TR) ! Go from middle to edg
-          IF(XWALL.LT.0.50) XNOM=0.0254   ! based on Peter's meas.
+          IF(XWALL.LT.0.50) XNOM=0.0254   ! based on Peter`s meas.
           IF(XWALL.GE.0.50.AND.XWALL.LT.1.00) XNOM=0.0238
           IF(XWALL.GE.1.00.AND.XWALL.LT.1.50) XNOM=0.0152
           IF(XWALL.GE.1.50.AND.XWALL.LT.2.50) XNOM=0.0127
@@ -1939,7 +1947,7 @@ C=======================================================================
 !  (B*(x - XC))**2 + (A*y)**2 = (A*B)**2.
 !  The center of the target is taken as the y axis.
 !  It set HIT .TRUE. if the solution exists, .FALSE. otherwise.
-!  If doesn't hit endcap, then give x,y of where hits target wall,
+!  If doesn`t hit endcap, then give x,y of where hits target wall,
 !  assumed to be at radius B
 !  Output variables:
 !  X,Y  - are the coordinates of the intersection.
@@ -2392,7 +2400,7 @@ C section. Formulas from ASTRUC of Mo-Tsai program.
            CALL DEUT_U1(IDUT-10,QSQ,A_ULMAR,B_ULMAR)
            W1 = B_ULMAR/2.  ! sigma = sig_mot(A + B*tan...)
            W2 = A_ULMAR
-        ELSEIF(IDUT.EQ.1) THEN ! Linda Stuart's Model installed 5/30/96
+        ELSEIF(IDUT.EQ.1) THEN ! Linda Stuart`s Model installed 5/30/96
            CALL FFD(DBLE(QSQ),GE,GM)
            TAU = QSQ/4./avgM**2
            W1 = TAU*GM**2
@@ -2796,7 +2804,7 @@ C moving nucleon
      >    +TAN2*PZ**2
       vm=((rq2*0.5+tan2)*qm2k-rq2*0.5*qm2)*0.5
 c     efpf=pxf*cost+pyf*sint
-      sigm=sig*omv2**2/ep/epf !(epf-efpf) in ingo's version
+      sigm=sig*omv2**2/ep/epf !(epf-efpf) in ingo`s version
       sigp=sigm*(ve*(f1p**2+qm2k*(tpm1*cf2p)**2)+vm*(f1p+cf2p)**2)
       sign=sigm*(ve*(f1n**2+qm2k*(tpm1*cf2n)**2)+vm*(f1n+cf2n)**2)
       sigp=sigp*hbc*hbc
@@ -3088,16 +3096,6 @@ C=======================================================================
       IF (FDEL.LE.0.) FDEL = 0.
       RETURN
       END
-
-C ----------------------------------------------------------------------
-c
-c     subroutine time(vt,tt)
-c
-c      call vttime(ivtime,ittime)                                       0
-c     vt = float(ivtime)/100.0
-c     tt = float(ittime)/100.0
-c     return
-c     end
 
 C ====================================================================
 
@@ -3540,7 +3538,7 @@ C $MEMBER=QUADMO, DATE=75061922, USER=KCE
            CALL DEUT_U1(IDUT-10,QSQ,A_ULMAR,B_ULMAR)
            W1 = B_ULMAR/2.  ! sigma = sig_mot(A + B*tan...)
            W2 = A_ULMAR
-        ELSEIF(IDUT.EQ.1) THEN ! Linda Stuart's Model installed 5/30/96
+        ELSEIF(IDUT.EQ.1) THEN ! Linda Stuart`s Model installed 5/30/96
            CALL FFD(DBLE(QSQ),GE,GM)
            TAU = QSQ/4./avgM**2
            W1 = TAU*GM**2
@@ -3667,7 +3665,7 @@ C $MEMBER=QUADMO, DATE=75061922, USER=KCE
        ENDIF
         PAULI_SUP1= Pauli_sup2
       ENDIF
-      IF(PAULI_MODEL.EQ.4) THEN ! Louk's formula for Deuterium
+      IF(PAULI_MODEL.EQ.4) THEN ! Louk`s formula for Deuterium
         TAU   = QSQ/MP24
         Q=SQRT(QSQ*TAU+QSQ)
         xx = q * 1000. / 100.
@@ -6045,7 +6043,7 @@ CDG ATMP is a fake variable so I can iterate the EMC effect
 !---------------------------------------------------------------------
 ! -*-Mode: Fortran; compile-command: "f77 -o inelstu.o -c inelstu.f"; -*-
        SUBROUTINE INELSTU(X,q2,F2,W1,W2,IMOD)
-! New call to Linda Stuarts fit to resonance Larry's DIS fit
+! New call to Linda Stuarts fit to resonance Larry`s DIS fit
 ! Steve Rock 10/14/93
 
 *******************************************************************************
@@ -7414,7 +7412,7 @@ C$$      B = -.171*X2 + .277*X3
 !
 !     D3 = uncertainty in R due to possible epsilon dependent errors
 !          in the radiative corrections, taken to be +/- .025.  See
-!          theses (mine or Dasu's) for details.  This is copied from R1990
+!          theses (mine or Dasu`s) for details.  This is copied from R1990
 !
 ! and the total error is returned by the program:
 !
@@ -7616,7 +7614,6 @@ C OMEGAW FIT
      *     CFD(11)/ 0.50000000E 00/
 
 C COMPUTE SOME KINEMATIC QUANTITIES
-
       WW     = W**2
       V      = (WW+QQ-PMPM)/2.D0/PM
       VV     = V*V
@@ -7624,7 +7621,6 @@ C COMPUTE SOME KINEMATIC QUANTITIES
 
 C OVERCOME RISK OF UNDERFLOW IN THE EXPONENTIATION
       OMEGAP = DMIN1(20.0D0,OMEGAP)
-
       SP = 1.0-EXP(-7.7*(OMEGAP-1.0))
       IF (amuM.LE.1.5) THEN !hydrogen
 C          UNIVERSAL AND RESONANCE FIT FOR HYDROGEN
@@ -7635,7 +7631,6 @@ C          UNIVERSAL AND RESONANCE FIT FOR DEUTERIUM
            UNIV = SLACF2(W,QQ,CFD)/SP
            BRES = B(W,QQ,CD)
       ENDIF
-
 C COMPUTE VW2,W2,W1
 
       VW2    = UNIV*BRES
@@ -8018,7 +8013,7 @@ C GARI AND KRUMPELMANN WITH NE11 FIT (PETER')
       GMN  = GMP/RMUP * RMUN
       RETURN
 
-! Peter Bosted's fit from SLAC-PUB-6651 (NE11 data + other) in Phys Rev C
+! Peter Bosted`s fit from SLAC-PUB-6651 (NE11 data + other) in Phys Rev C
  250  CONTINUE
       Q = SQRT(QQG)
       Q3= Q*QQG
