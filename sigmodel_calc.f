@@ -84,9 +84,6 @@ c	deltae = 0.0102
 	e1cc = e1 + deltae
 	e2cc = e2 + deltae
 
-
-c
-
 	if(first) then
 	   first=.false.
 C  Here, all we're concerned about are the aux parameters
@@ -248,6 +245,7 @@ c	innp = 30.0
 	if((xflag.eq.1).or.(xflag.eq.2)) then
 	   if(a.gt.1.5) then
 	      call f_to_sig(e1cc,e2cc,th,a,z,m_tgt,aux,sig_qe,y,fact)
+c				write(22,*) e2cc,y,th,sig_qe,fact
 	   else
 	      sig_qe=0.0
 	   endif
@@ -283,7 +281,7 @@ c--------------------------------------------------------------------
 	   x1=0.8		!x<x1 --> use emc corrected ld2
 	   x2=0.9		!x1<=x<x2 --> smooth transition from emc corrected ld2 to donals smearing
 				!x>=x2  --> donal`s smearing
-
+c		write(6,*) "A  ",a
 	   if(a.ge.2) then
 
 	      if(WSQ.lt.2.25) then
@@ -293,10 +291,10 @@ c--------------------------------------------------------------------
 		 			innt=30
 		 			innp=10
 	      endif
-
+c				write(6,*) "Checking sig model in calc", SIG_MODEL
 	      call bdisnew4he3(e1cc,e2cc,th,a, z,nn, epsn(inta),
 	1	   pmax, innp, innt,  aux(3),aux(4), aux(5),
-	2	   aux(6),aux(7),sig_donal)
+	2	   aux(6),aux(7),sig_donal,SIG_MODEL)
 
 c	      write(6,*) 'back from bdisnew',sig_donal
 
@@ -318,9 +316,9 @@ c	      call F1F2IN09(Z, A, Q2, WSQ, F1, F2,r)
 C       Convert F1,F2 to W1,W2
 	      W1 = F1/m_p
 	      W2 = F2/nu
-				call INEFT(Q2,W1_ineft,W2_ineft,amuM)
+				call INEFT(Q2,WSQ,W1_ineft,W2_ineft,amuM)
 
-				write(6,*)"poo ", W1_ineft, W1, W2_ineft, W2, x
+c				write(6,*)"poo ", W1_ineft, W1, W2_ineft, W2, x
 
 
 C       Mott cross section
@@ -474,6 +472,16 @@ c	1	   + 14.074*xtmp**4 -9.3065*xtmp**5
 C it 3
 	   emc = 0.46324 + 6.1220*xtmp - 12.184*xtmp**2 -1.0956*xtmp**3
 	1	+ 20.316*xtmp**4 -12.899*xtmp**5
+
+
+	else if(A.eq.10) then
+		emc = 0.63653 + 4.6458*xtmp -9.2994*xtmp**2
+	1	-1.2226*xtmp**3 +16.157*xtmp**4 -10.236*xtmp**5
+
+
+	else if(A.eq.11) then
+		emc = 0.63653 + 4.6458*xtmp -9.2994*xtmp**2
+	1	-1.2226*xtmp**3 +16.157*xtmp**4 -10.236*xtmp**5
 C Carbon**********************************************************************************
 	else if(A.eq.12) then
 C it 2

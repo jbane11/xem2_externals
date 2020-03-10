@@ -120,7 +120,7 @@ C Constants for bremstrahlung and ionization spectra for target and for
 C aluminum:
 
       ETA  = LOG(1194./iZ**0.6667)/LOG(184.15/iZ**0.3333)
-      B    = 4./3.*(1.+1./9.*(iZ+1.)/(iZ+ETA)/LOG(184.15/iZ**0.3333))
+      B    = 4./3.*(1.+1./9.*(iZ+1.)/(iZ+E TA)/LOG(184.15/iZ**0.3333))
       AX0  = 0.000154*iZ/amuM*X0
       BA   = 1.3667511
       AX0A =  .0017535
@@ -167,7 +167,7 @@ c Loop over kinematic points:
 C Bane     old format for above read statement = '(F6.3,1x,F6.4,1x,F6.4)'
            IF (E0SET.LE.0.) GOTO 100
          endif
-
+         Write(6,*) "kins E, ep, th ", E0SET,EPSET,THSET
          TH    = THSET
          THR   = TH*PI/180.
          SIN2  = SIN(THR/2.)**2
@@ -212,7 +212,7 @@ c     CALL  FYXSEC8(E0SET,EPSET,TH,SIGMA_CORR)
 
          SIGMA_BORNPLSQE = SIGMA_BORN+SIGMA_CORR
 
-         dorad=.false.
+         dorad=.true.
          doext=.true.
 
          if(dorad) then
@@ -357,6 +357,8 @@ c     dorad           SIGMA_BORNPLSQE = SIGMA_BORN+SIGMA_CORR
      >             DELTA_QELA(2), DELTA_ELPK(2), TOTAL(2),
      >             SIGMA_BORNPLSQE
            endif                !test on do rad
+c End of dorad if
+
            sbsv(npts)= SIGMA_BORNPLSQE
            sbisv(npts) = SIGMA_BORN
            sbqesv(npts) = SIGMA_CORR
@@ -375,7 +377,7 @@ c           sfactsv(npts) = qefact
 c --- aji ----------------------------------------------
 c now do Coulomb correction
 
-           doccor=.false.
+           doccor=.true.
 
            if(doccor) then
 cc first get the vertex quantities and do a target dependent
@@ -463,6 +465,7 @@ cdg      write(16,'(1x,''join dotdash'')')
      >           1PE10.3,/)') (ZERO(i),i=1,18)
 
       CLOSE(10)
+      CLOSE(22)
 
       END
 
@@ -3686,8 +3689,8 @@ c! used to be Called from cexternal.c
       COMMON /TARGT/  iZ,iA,avgN,avgA,avgM,amuM
       INTEGER IZ,IA
       REAL avgN,avgA,avgM,amuM
-      COMMON/IKK12/IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL
-      INTEGER IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL
+      COMMON/IKK12/IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL,SIG_MODEL
+      INTEGER IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL,SIG_MODEL
       COMMON /TTYPE/  TARGET
       CHARACTER*7     TARGET
       COMMON /TRL/    TTARG,TWALL,TBEAM,TSPEC,ITARG,NSEG,JTARG
@@ -3733,6 +3736,8 @@ c     open the inp file  read in the information and write to stdout
       WRITE(6,'(A)') EXTERNAL_OUT
       close(unit=20)
 
+      OPEN(UNIT=22,FILE="runout/ys.out")
+
 c     open other important files
       OPEN(UNIT=10,FILE=EXTERNAL_OUT)
       OPEN(UNIT=7,FILE=EXTERNAL_RUNPLAN)
@@ -3747,7 +3752,7 @@ c     open other important files
      +            target,
      +            ttarg,twall,tbeam,tspec,
      +            NSEG,
-     +    IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL
+     +    IG,IDUT,INEL_MODEL,PAULI_MODEL,NUC_METHOD,NUC_MODEL,SIG_MODEL
 
 
       IF(TARGET.EQ.'E140XH2') ITARG=1
@@ -3768,7 +3773,9 @@ c     open other important files
      +             15X,I5/    ! INEL_MODEL
      +             15X,I5/     !Pauli suppression
      +             15X,I5/     ! Nuclear Tail Method: NUC_METHOD
+     +             15X,I5/     ! Nuclear Tail Method: NUC_METHOD
      +             15X,I5)     ! Nuclear Form Factor: NUC_MODEL
+
 
       call Q_E_VANORDEN_INIT(REAL(iZ),REAL(iA),.25,1)!Fermi Momentum=.25
 c     calculate avg and AvgM if not given.
@@ -7768,7 +7775,7 @@ C FORM VW2/F2
 
 !-----------------------------------------------------------------------
 C CALCULATE NUCLEON FORM FACTORS
-! Modified by Steve Rock on 6/21/96 adding Peters's Phys Rev C. fit
+! Modified by Steve Rock on 6/21/96 adding Peters`s Phys Rev C. fit
 !  and putting IG in arguements
 !
 C IG =1 - DIPOLE WITH FORM FACTOR SCALING AND GEN=0.0

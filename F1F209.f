@@ -3,13 +3,13 @@ c F1F209.f
 c Package of FORTRAN subroutine describing fits to inclusive inelastic
 c electron scattering from proton, neutron, deuteron, or heaviere nuclei
 c Proton fit is described in:
-c   M.E. Christy and P.E. Bosted, ``Empirical Fit to Precision 
+c   M.E. Christy and P.E. Bosted, ``Empirical Fit to Precision
 c    Inclusive Electron-Proton Cross Sections in the Resonance Region'',
 c    (arXiv:0712.3731). Submitted to Phys. Rev. C.
 c Deuteron (and netron) fit is described in:
-c    P.E. Bosted and M.E. Christy, ``Empirical Fit to Inelastic 
+c    P.E. Bosted and M.E. Christy, ``Empirical Fit to Inelastic
 c    Electron-Deuteron and Electron-Neutron
-c    Resonance Region Transverse Cross Sections, 
+c    Resonance Region Transverse Cross Sections,
 c    (arXiv:0711.0159), publichished in Phys. Rev. C 77, 065206 (2008). (
 c New fits for A>2 by Vahe M. and Peter B. (to be publsihed).
 c
@@ -49,13 +49,13 @@ c subroutine resmod507. Returns sigma_L or sigma_T
 c      (called by christy507)
 c subroutine mec. Called by resd to get extra terms
 c      for dip region between quasi-elastic and Delta
-c funtion fitemc_rock. Fit to "EMC effect" used to 
+c funtion fitemc_rock. Fit to "EMC effect" used to
 c      get F1 and F2 for A>2
-c 
+c
 c subroutine F1F2QE09. Returns quasi-elastic F1, F2 for
 c      nucleus with charge Z and atomic number A
 c      for given value of Q2 and W**2
-c 
+c
 cc      implicit none
 cc      integer iq,iw
 cc      real*8 q2,w2,F1n,F2n,r,F1p,F2p,F1d,F2d,F1c,F2c
@@ -88,19 +88,19 @@ cc      end
 
 
 C=======================================================================
-                                                                        
-      SUBROUTINE F1F2IN09(Z, A, QSQ, Wsq, F1, F2, rc)                       
+
+      SUBROUTINE F1F2IN09(Z, A, QSQ, Wsq, F1, F2, rc)
 !--------------------------------------------------------------------
-! Fit to inelastic cross sections for A(e,e')X
+! Fit to inelastic cross sections for A(e,e`)X
 ! valid for all W<3 GeV and all Q2<10 GeV2
-! 
-! Inputs: Z, A (real*8) are Z and A of nucleus 
+!
+! Inputs: Z, A (real*8) are Z and A of nucleus
 !         (use Z=0., A=1. to get free neutron)
 c         Qsq (real*8) is 4-vector momentum transfer squared (positive in
 c                     chosen metric)
 c         Wsq (real*8) is invarinat mass squared of final state calculated
 c                     assuming electron scattered from a free proton
-c                 
+c
 c outputs: F1, F2 (real*8) are structure functions per nucleus
 ! Version of 10/20/2006 P. Bosted
 !--------------------------------------------------------------------
@@ -115,13 +115,13 @@ c outputs: F1, F2 (real*8) are structure functions per nucleus
       logical goodfit
       INTEGER ISM
 
-! new variables for Fermi smearing over +/- 3 sigma. Sum of 
+! new variables for Fermi smearing over +/- 3 sigma. Sum of
 ! fy values is 1.000, so no effect if W1 is constant with W
       REAL*8 XX(15)/-3.000,-2.571,-2.143,-1.714,-1.286,-0.857,
-     >              -0.429, 0.000, 0.429, 0.857, 1.286, 1.714, 
+     >              -0.429, 0.000, 0.429, 0.857, 1.286, 1.714,
      >               2.143, 2.571, 3.000/
-      real*8 fy(15)/0.0019, 0.0063, 0.0172, 0.0394, 0.0749, 0.1186, 
-     >              0.1562, 0.1712, 0.1562, 0.1186, 0.0749, 0.0394, 
+      real*8 fy(15)/0.0019, 0.0063, 0.0172, 0.0394, 0.0749, 0.1186,
+     >              0.1562, 0.1712, 0.1562, 0.1186, 0.0749, 0.0394,
      >              0.0172, 0.0063, 0.0019/
 
 ! This is for exp(-xx**2/2.), from teste.f
@@ -152,7 +152,7 @@ c outputs: F1, F2 (real*8) are structure functions per nucleus
      > 0.1049,0.0898,0.0766,0.0651,0.0551,0.0464,0.0390,0.0326,0.0272/
 
       integer iz,ia,i
-      real PM/0.93828/,THCNST/0.01745329/,ALPHA/137.0388/        
+      real PM/0.93828/,THCNST/0.01745329/,ALPHA/137.0388/
       real*8 PI/3.1415926535D0/
 
 ! deuteron fit parameters
@@ -168,7 +168,7 @@ c outputs: F1, F2 (real*8) are structure functions per nucleus
      > -0.7534E+02, 0.1776E+00, 0.1636E+01, 0.1350E+00,-0.5596E-02,
      >  0.5883E-02, 0.1934E+01, 0.3800E+00, 0.3319E+01, 0.1446E+00/
 
-cc     
+cc
        real*8 F1M
        logical DEBUG/.TRUE./
 
@@ -193,7 +193,7 @@ cc
           call resmodd(wsq,qsq,xvald0,F1d)
           F1p = F1d * 2.0 - F1p
         endif
-        W1 = F1p / PM 
+        W1 = F1p / PM
         W2 = W1 * (1. + Rc) / (1. + nu**2 / qsq)
       ENDIF
 
@@ -220,33 +220,33 @@ c convert to W1 per deuteron
         if(iA.eq.2) Es=0.0022
 ! changed 4/09
         if(IA.eq.3) kf=0.115
-        if(iA.eq.3) Es=0.001 
+        if(iA.eq.3) Es=0.001
 ! changed 4/09
         if(IA.gt.3) kf=0.19
         if(iA.gt.3) Es=0.017
         if(IA.gt.7) kf=0.228
-        if(iA.gt.7) Es=0.020 
+        if(iA.gt.7) Es=0.020
 c changed 5/09
         if(iA.gt.7) Es=0.0165
         if(IA.gt.16) kf=0.230
-        if(iA.gt.16) Es=0.025 
+        if(iA.gt.16) Es=0.025
         if(IA.gt.25) kf=0.236
-        if(iA.gt.25) Es=0.018 
+        if(iA.gt.25) Es=0.018
         if(IA.gt.38) kf=0.241
-        if(iA.gt.38) Es=0.028 
+        if(iA.gt.38) Es=0.028
         if(IA.gt.55) kf=0.241
-        if(iA.gt.55) Es=0.023 
+        if(iA.gt.55) Es=0.023
         if(IA.gt.60) kf=0.245
-        if(iA.gt.60) Es=0.028 
-! changed 5/09 
-        if(iA.gt.55) Es=0.018 
- 
+        if(iA.gt.60) Es=0.028
+! changed 5/09
+        if(iA.gt.55) Es=0.018
+
 
 ! adjust pf to give right width based on kf
-        pf = 0.5 * kf 
+        pf = 0.5 * kf
 ! assume this is 2 * pf * qv
         DW2DPF = 2. * qv
-        dw2des = 2. * (nu + PM) 
+        dw2des = 2. * (nu + PM)
 ! switched to using 99 bins!
 cc        do ism = 1,15
 cc          fyuse = fy(ism)
@@ -265,17 +265,17 @@ cc          WSQP = WSQ + XX(ISM) * PF * DW2DPF - es * dw2des
         ENDDO
         Rc = 0.
         if(sigt .gt. 0.) Rc = sigl / sigt
-        W1 = (2. * Z * F1d + (A - 2. * Z) * (2. * F1d - F1p)) / PM 
+        W1 = (2. * Z * F1d + (A - 2. * Z) * (2. * F1d - F1p)) / PM
 
         W1= W1*(1.0+P(13)*x+P(14)*x**2+P(15)*x**3+P(16)*x**4+P(17)*x**5)
 
-cc        if(W .GT. 1.3) 
-        if(W .GT. 0.0) 
+cc        if(W .GT. 1.3)
+        if(W .GT. 0.0)
      >       W1=W1*(1.0+(P(20)*W+P(21)*W**2)/(1.0+P(22)*QSQ))**2
 
 C Temp test DJG May 23 ,2013
         CALL MEC2009( Z , A , qsq , wsq , F1M )
-C  
+C
 
 c        F1M=0.0d0
 
@@ -284,9 +284,9 @@ c        F1M=0.0d0
         W2 = W1 * (1. + Rc) / (1. + nu**2 / qsq)
 
         DEBUG=.FALSE.
-        IF( W1 .LE. 0.0 .AND. DEBUG ) THEN 
+        IF( W1 .LE. 0.0 .AND. DEBUG ) THEN
            write(*,*) 'test  = ', Z,A,W,QSQ,x,F1M,W1
-           write(*,*) 'test1 = ', 
+           write(*,*) 'test1 = ',
      >          (1.0+(P(20)*W+P(21)*W**2)/(1.0+P(22)*QSQ)),
      >        (1.0+P(13)*x+P(14)*x**2+P(15)*x**3+P(16)*x**4+P(17)*x**5)
         ENDIF
@@ -297,11 +297,11 @@ c        F1M=0.0d0
       x4 = qsq / 2. / pm / nu
       emcfac = fitemc_rock(x4, a4, goodfit)
 
-      F1 = pm * W1 * emcfac 
-      F2 = nu * W2 * emcfac 
+      F1 = pm * W1 * emcfac
+      F2 = nu * W2 * emcfac
 
-      RETURN                                                            
-      END                                          
+      RETURN
+      END
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       SUBROUTINE MEC2009(z,a,q2,w2,f1)
@@ -311,7 +311,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       implicit none
       real*8 z,a,q2,w2,f1,am/0.9383/,w,nu
       integer i
-      real*8 pb(20)/ 
+      real*8 pb(20)/
      >     0.1023E+02, 0.1052E+01, 0.2485E-01, 0.1455E+01,
      >     0.5650E+01,-0.2889E+00, 0.4943E-01,-0.8183E-01,
      >    -0.7495E+00, 0.8426E+00,-0.2829E+01, 0.1607E+01,
@@ -345,8 +345,8 @@ c      if(a.gt.3.5 .and. a.lt.4.5) p18 = 145.
       if(a.gt.20.) p18 = 235.
       if(a.gt.50.) p18 = 230.
 
-       
-       f1corr = P(0)*exp(-((W-P(1))**2)/(P(2)))/ 
+
+       f1corr = P(0)*exp(-((W-P(1))**2)/(P(2)))/
      >      ((1.0 + MAX( 0.3 , Q2 ) / P(3) ) ** P(4) )*nu**P(5)
      >      *( 1.0 + P18 * A ** ( 1.0 + P(19) * x ) )
 
@@ -354,7 +354,7 @@ c      if(a.gt.3.5 .and. a.lt.4.5) p18 = 145.
 
        if(f1 .le.1.0E-9 ) f1=0.0
 c       write(*,*) 'vahe1= ', A, W*W, Q2, f1corr
-       if(f1.lt.0.0) then 
+       if(f1.lt.0.0) then
           write(6,*) 'cheesy poofs!: MEC term < 0!',w,f1
        endif
 
@@ -373,7 +373,7 @@ c        Qsq (real*8) is 4-vector momentum transfer squared (positive in
 c                     chosen metric)
 c        Wsq (real*8) is invarinat mass squared of final state calculated
 c                     assuming electron scattered from a free proton
-c                 
+c
 c outputs: F1, F2 (real*8) are structure functions per nucleus
 c
 c Note: Deuteron agrees well with Laget (see ~bosted/eg1b/laget.f) for
@@ -382,14 +382,14 @@ c b) Q2>1 gev**2 on wings of q.e. peak. But, this model is up
 c    to 50% too big at top of q.e. peak. BUT, F2 DOES agree very
 c    nicely with Osipenko et al data from CLAS, up to 5 GeV**2
 
-      IMPLICIT NONE     
+      IMPLICIT NONE
       REAL*8 P(0:23)
       COMMON/PARCORR/P
       REAL*8 Z, A, avgN, F1, F2, wsq, qsq
       REAL*8 amp/0.93828/, amd/1.8756/
       REAL*8 PAULI_SUP1, PAULI_SUP2
       REAL*8 GEP, GEN, GMP, GMN, Q, Q3, Q4
-      REAL*8 RMUP/ 2.792782/ ,RMUN/ -1.913148 /                
+      REAL*8 RMUP/ 2.792782/ ,RMUN/ -1.913148 /
       real*8 pz, nu, dpz, pznom, pzmin
       real*8 qv, TAU, W1, W2, FY, dwmin, w2p
       real kappa, lam, lamp, taup, squigglef, psi, psip, nuL, nut
@@ -456,7 +456,7 @@ c     Peter Bosted's correction params
      >      0.5650E+01,-0.2889E+00, 0.4943E-01,-0.8183E-01,
      >     -0.7495E+00, 0.8426E+00,-0.2829E+01, 0.1607E+01,
      >      0.1733E+00, 0.0000E+00, 0.0000E+00, 0.0000E+00,
-     >      0.0000E+00, 0.0000E+00, 0.0000E+00, 0.0000E+00/ 
+     >      0.0000E+00, 0.0000E+00, 0.0000E+00, 0.0000E+00/
        real*8 y,R
 
 ! return if proton: future change this to allow for
@@ -464,25 +464,25 @@ c     Peter Bosted's correction params
       F1 = 0.
       F2 = 0.
       IA = int(A)
-      avgN = A - Z 
+      avgN = A - Z
       IF (iA.EQ.1) RETURN
 
 ! some kinematic factors. Return if nu or qsq is negative
       Nu = (wsq - amp**2 + qsq) / 2. / amp
       if(nu .le. 0.0 .or. qsq .lt. 0.) return
-      TAU   = QSQ / 4.0 / amp**2                                        
+      TAU   = QSQ / 4.0 / amp**2
       qv = sqrt(nu**2 + qsq)
 
 ! Bosted fit for nucleon form factors Phys. Rev. C 51, p. 409 (1995)
       Q = sqrt(QSQ)
       Q3 = QSQ * Q
       Q4 = QSQ**2
-      GEP = 1./  (1. + 0.14 * Q + 3.01 * QSQ + 0.02 * Q3 + 
+      GEP = 1./  (1. + 0.14 * Q + 3.01 * QSQ + 0.02 * Q3 +
      >  1.20 * Q4 + 0.32 * Q**5)
       GMP = RMUP * GEP
-      GMN = RMUN / (1.- 1.74 * Q + 9.29 * QSQ - 7.63 * Q3 + 
+      GMN = RMUN / (1.- 1.74 * Q + 9.29 * QSQ - 7.63 * Q3 +
      >  4.63 * Q4)
-      GEN = 1.25 * RMUN * TAU / (1. + 18.3 * TAU) / 
+      GEN = 1.25 * RMUN * TAU / (1. + 18.3 * TAU) /
      >  (1. + QSQ / 0.71)**2
 
 ! Get kf and Es from superscaling from Sick, Donnelly, Maieron,
@@ -491,26 +491,26 @@ c nucl-th/0109032
       if(iA.eq.2) Es=0.0022
 ! changed 4/09
       if(IA.eq.3) kf=0.115
-      if(iA.eq.3) Es=0.001 
+      if(iA.eq.3) Es=0.001
 ! changed 4/09
       if(IA.gt.3) kf=0.19
-      if(iA.gt.3) Es=0.017 
+      if(iA.gt.3) Es=0.017
       if(IA.gt.7) kf=0.228
-      if(iA.gt.7) Es=0.020 
+      if(iA.gt.7) Es=0.020
 c changed 5/09
         if(iA.gt.7) Es=0.0165
       if(IA.gt.16) kf=0.230
-      if(iA.gt.16) Es=0.025 
+      if(iA.gt.16) Es=0.025
       if(IA.gt.25) kf=0.236
-      if(iA.gt.25) Es=0.018 
+      if(iA.gt.25) Es=0.018
       if(IA.gt.38) kf=0.241
-      if(iA.gt.38) Es=0.028 
+      if(iA.gt.38) Es=0.028
       if(IA.gt.55) kf=0.241
-      if(iA.gt.55) Es=0.023 
+      if(iA.gt.55) Es=0.023
       if(IA.gt.60) kf=0.245
-      if(iA.gt.60) Es=0.028 
-! changed 5/09 
-        if(iA.gt.55) Es=0.018 
+      if(iA.gt.60) Es=0.028
+! changed 5/09
+        if(iA.gt.55) Es=0.018
 
 
 ! Pauli suppression model from Tsai RMP 46,816(74) eq.B54
@@ -534,7 +534,7 @@ c changed 5/09
       psi =  (lam  - tau ) / sqrt(squigglef) /
      >  sqrt((1.+lam )* tau + kappa * sqrt(tau * (1. + tau)))
 
-      psip = (lamp - taup) / sqrt(squigglef) / 
+      psip = (lamp - taup) / sqrt(squigglef) /
      >  sqrt((1.+lamp)*taup + kappa * sqrt(taup * (1. + taup)))
 
       nuL = (tau / kappa**2)**2
@@ -542,10 +542,10 @@ c changed 5/09
 c changed definition of nuT from
 c      nuT = tau / 2. / kappa**2 + tan(thr/2.)**2
 c to this, in order to separate out F1 and F2 (F1 prop. to tan2 term)
-      nuT = tau / 2. / kappa**2 
+      nuT = tau / 2. / kappa**2
 
-      GM2bar = Pauli_sup1 * (Z * GMP**2 + avgN * GMN**2)  
-      GE2bar = Pauli_sup2 * (Z * GEP**2 + avgN * GEN**2) 
+      GM2bar = Pauli_sup1 * (Z * GMP**2 + avgN * GMN**2)
+      GE2bar = Pauli_sup2 * (Z * GEP**2 + avgN * GEN**2)
       W1bar = tau * GM2bar
       W2bar = (GE2bar + tau * GM2bar) / (1. + tau)
 
@@ -553,7 +553,7 @@ c to this, in order to separate out F1 and F2 (F1 prop. to tan2 term)
      >  sqrt(tau * (1.+tau)) / kappa + squigglef/3. *
      >  (1. - psi**2) * tau / kappa**2)
 
-      GL = kappa**2 / tau * (GE2bar + Delta * W2bar) / 
+      GL = kappa**2 / tau * (GE2bar + Delta * W2bar) /
      >  2. / kappa / (1. + squigglef * (1. + psi**2) / 2.)
       GT = (2. * tau * GM2bar + Delta * W2bar) /
      >  2. / kappa / (1. + squigglef * (1. + psi**2) / 2.)
@@ -562,7 +562,7 @@ c added to prevent negative xsections:
       gt = max(0., gt)
 
 ! from Maria Barbaro: see Amaro et al., PRC71,015501(2005).
-      FY = 1.5576 / (1. + 1.7720**2 * (psip + 0.3014)**2) / 
+      FY = 1.5576 / (1. + 1.7720**2 * (psip + 0.3014)**2) /
      >   (1. + exp(-2.4291 * psip)) / kf
 
 ! Use PWIA and Paris W.F. for deuteron to get better FY
@@ -575,16 +575,16 @@ c added to prevent negative xsections:
 ! ignoring energy term, estimate change in pz to compensate
 ! for avp2 term
         dpz = avp2(izznom) / 2. / qv
-        izdif = dpz * 150. 
+        izdif = dpz * 150.
         dwmin=1.E6
         izzmin=0
         do izp = izznom, min(200, max(1, izznom + izdif))
           pz = -1. + 0.01 * (izp-0.5)
 c *** this version gives worse agreement with laget than
-c         w2p = (amd + nu - sqrt(amp**2 + avp2(izp)))**2 - 
+c         w2p = (amd + nu - sqrt(amp**2 + avp2(izp)))**2 -
 c    >      qv**2 + 2. * qv * pz - avp2(izp)
 c this version!
-          w2p = (amd + nu - amp )**2 - 
+          w2p = (amd + nu - amp )**2 -
      >      qv**2 + 2. * qv * pz - avp2(izp)
 c if passed first minimum, quit looking so don't find second one
           if(abs(w2p - amp**2).gt.dwmin) goto 11
@@ -600,24 +600,24 @@ c if passed first minimum, quit looking so don't find second one
         do izp = 1,19
           pz = pznom - 0.01 + 0.001 * izp
 c *** this version gives worse agreement with laget than
-c         w2p = (amd + nu - sqrt(amp**2 + avp2(izz)))**2 - 
+c         w2p = (amd + nu - sqrt(amp**2 + avp2(izz)))**2 -
 c   >      qv**2 + 2. * qv * pz - avp2(izz)
 c this version!
-          w2p = (amd + nu - amp )**2 - 
+          w2p = (amd + nu - amp )**2 -
      >      qv**2 + 2. * qv * pz - avp2(izz)
           if(abs(w2p - amp**2).lt.dwmin) then
             dwmin = abs(w2p - amp**2)
             pzmin = pz
           endif
         enddo
-        if(dwmin.ge.1.e6.or.abs(pznom-pzmin).gt.0.01) 
+        if(dwmin.ge.1.e6.or.abs(pznom-pzmin).gt.0.01)
      >     write(6,'(1x,''error in dwmin,pzmin'',3i4,6f7.3)')
      >     izznom,izzmin,izz,qsq,wsq,w2p,dwmin/1.e6,pzmin,pznom
         if(pzmin.lt.pznom) then
-          fy = fyd(izz) - (fyd(izz-1) - fyd(izz)) * 
+          fy = fyd(izz) - (fyd(izz-1) - fyd(izz)) *
      >      (pzmin - pznom) / 0.01
         else
-          fy = fyd(izz) + (fyd(izz+1) - fyd(izz)) * 
+          fy = fyd(izz) + (fyd(izz+1) - fyd(izz)) *
      >      (pzmin - pznom) / 0.01
         endif
       endif
@@ -659,11 +659,11 @@ cc correction to correction Vahe
       REAL*8 P(0:23)
       COMMON/PARCORR/P
 c     DATA P/
-c    c       5.1141e-02,   9.9343e-01,   5.3317e-02,   1.3949e+00, 
-c    c       5.9993e+00,  -2.9393e-01,   9.9316e-02,   1.0935e-02, 
-c    c       3.7697e-01,   1.3542e+00,  -7.4618e+00,   4.3540e+00, 
-c    c      -3.7911e-01,   3.5105e-01,  -1.8903e+00,   4.9139e+00, 
-c    c      -5.9923e+00,   2.5021e+00,   1.9943e+01,  -5.5879e-02, 
+c    c       5.1141e-02,   9.9343e-01,   5.3317e-02,   1.3949e+00,
+c    c       5.9993e+00,  -2.9393e-01,   9.9316e-02,   1.0935e-02,
+c    c       3.7697e-01,   1.3542e+00,  -7.4618e+00,   4.3540e+00,
+c    c      -3.7911e-01,   3.5105e-01,  -1.8903e+00,   4.9139e+00,
+c    c      -5.9923e+00,   2.5021e+00,   1.9943e+01,  -5.5879e-02,
 c    c       3.1914e-01,  -1.8657e-01,   3.2746e+01,   4.9801e-03/
        DATA P/
      c       5.1377e-03,   9.8071e-01,   4.6379e-02,   1.6433e+00,
@@ -676,7 +676,7 @@ c    c       3.1914e-01,  -1.8657e-01,   3.2746e+01,   4.9801e-03/
 
 
       subroutine pind(W2,Q2,F1,R,sigt,sigl)
-! Calculate proton with Fermi smearing of a deuteron 
+! Calculate proton with Fermi smearing of a deuteron
       implicit none
       real*8 q2,w2,F1,R,sigt,sigl,am/0.9383/,nu,qv,F1p,Rp,sigtp,siglp
       real*8 amd/1.8756/,w2p,pz
@@ -753,7 +753,7 @@ c Look up tables for deuteron in fine bins for sub threshold
 ! Do fast 20 bins if abvoe threshold
       if(w2.gt.1.30) then
        do ism = 1,20
-         w2p = (amd + nu - sqrt(am**2 + avp2(ism)))**2 - 
+         w2p = (amd + nu - sqrt(am**2 + avp2(ism)))**2 -
      >    qv**2 + 2. * qv * avpz(ism) - avp2(ism)
         if(w2p.gt.1.155) then
           call CHRISTY507(W2p,Q2,F1p,Rp,sigtp,siglp)
@@ -765,8 +765,8 @@ c Look up tables for deuteron in fine bins for sub threshold
       else
        do ism = 1,200
         pz = -1. + 0.01 * (ism-0.5)
-c Need avp2f term to get right behavior x>1! 
-        w2p = (amd + nu - sqrt(am**2 + avp2f(ism)))**2 - 
+c Need avp2f term to get right behavior x>1!
+        w2p = (amd + nu - sqrt(am**2 + avp2f(ism)))**2 -
      >    qv**2 + 2. * qv * pz - avp2f(ism)
         if(w2p.gt.1.155) then
           call CHRISTY507(W2p,Q2,F1p,Rp,sigtp,siglp)
@@ -780,14 +780,14 @@ c Need avp2f term to get right behavior x>1!
       if(sigt.ne.0.) R = sigl / sigt
       return
       end
-      
+
 
       subroutine resd(q2,w2,xval,F1)
-! Calculate dueteron F1 by Fermi smearing of proton plus neutron 
+! Calculate dueteron F1 by Fermi smearing of proton plus neutron
 ! Add MEC term (not smeared)
-c    P.E. Bosted and M.E. Christy, ``Empirical Fit to Inelastic 
+c    P.E. Bosted and M.E. Christy, ``Empirical Fit to Inelastic
 c    Electron-Deuteron and Electron-Neutron
-c    Resonance Region Transverse Cross Sections, 
+c    Resonance Region Transverse Cross Sections,
 c    (arXiv:0711.0159). Submitted to Phys. Rev. C.
       implicit none
       real*8 q2,w2,xval(50),F1,am/0.9383/,nu,qv,dw2dpf,w2p,sigp,f1sv
@@ -863,7 +863,7 @@ c Look up tables for deuteron in fine bins for sub threshold
 ! Do fast 20 bins if abvoe threshold
       if(w2.gt.1.30) then
        do ism = 1,20
-        w2p = (amd + nu - sqrt(am**2 + avp2(ism)))**2 - 
+        w2p = (amd + nu - sqrt(am**2 + avp2(ism)))**2 -
      >    qv**2 + 2. * qv * avpz(ism) - avp2(ism)
         if(w2p.gt.1.155) then
           call resmodd(w2p,q2,xval,sigp)
@@ -875,11 +875,11 @@ c Look up tables for deuteron in fine bins for sub threshold
        do ism = 1,200
         pz = -1. + 0.01 * (ism-0.5)
 ! Need avp2f term to get right behavior x>1!
-        w2p = (amd + nu - sqrt(am**2 + avp2f(ism)))**2 - 
+        w2p = (amd + nu - sqrt(am**2 + avp2f(ism)))**2 -
      >    qv**2 + 2. * qv * pz - avp2f(ism)
         if(w2p.gt.1.155) then
           call resmodd(w2p,q2,xval,sigp)
-          F1 = F1 + sigp * fydf(ism) / 100. 
+          F1 = F1 + sigp * fydf(ism) / 100.
         endif
        enddo
       endif
@@ -900,9 +900,9 @@ c Look up tables for deuteron in fine bins for sub threshold
      >                 0, 0, 8, 9,10,11,12,13,14,15,
      >                16,17,18,19,20,21,22,23,24,25,
      >                26,27,28,29,30,31,32,33,34,35,
-     >                36,37,38,39,40,41, 0, 0,42,0/  
+     >                36,37,38,39,40,41, 0, 0,42,0/
       logical first/.true./
-      
+
       icall = icall + 1
       if(first) then
         open(unit=9,file='F1F207D2emat.dat')
@@ -940,7 +940,7 @@ c Look up tables for deuteron in fine bins for sub threshold
 
 ! returns F1 for average of free proton and neutron
 ! for given W2, Q2
-      SUBROUTINE RESMODD(w2,q2,xval,sig) 
+      SUBROUTINE RESMODD(w2,q2,xval,sig)
 
       IMPLICIT NONE
       REAL*8 W,w2,q2,mp,mp2,mpi2,xb,xth(4),sig,xval(50),mass(7),width(7)
@@ -965,7 +965,7 @@ c new 5/07 values. Values 1 and 7 will be overridden below.
       save
 
       sig = 0.
-      if(w2.lt.1.07327**2 .or. w2.gt.25 .or. 
+      if(w2.lt.1.07327**2 .or. w2.gt.25 .or.
      >  q2.lt.0.0 .or. q2.gt.11.0) then
         write(6,'(1x,''error, q2 or w2 out of range'',2f8.3)') w2,q2
         return
@@ -988,7 +988,7 @@ c do this if fitting masses or widths, else set first true in above
        alpha = 1./137.036
 
 ! branching ratios
-       br(1,1) = 1.0     
+       br(1,1) = 1.0
        br(2,1) = 0.5
        br(3,1) = 0.65
        br(4,1) = 0.65
@@ -1002,7 +1002,7 @@ c do this if fitting masses or widths, else set first true in above
        ang(3) = 2.       !!!  D13(1520)
        ang(4) = 3.       !!!  F15(1680)
        ang(5) = 0.       !!!  S15(1650)
-       ang(6) = 1.       !!!  P11(1440) roper   
+       ang(6) = 1.       !!!  P11(1440) roper
        ang(7) = 3.       !!!  ? 4th resonance region
 
 ! x0 parameter
@@ -1021,7 +1021,7 @@ c 2007
        do i=1,7
          br(i,2) = 1.-br(i,1)
        enddo
-    
+
 ! remember w2
        w2sv = w2
 
@@ -1029,11 +1029,11 @@ c 2007
 ! move masses, wdiths into local variables
 ! pyb changed to be fixed
        num = 0
-       do i=1,6              
+       do i=1,6
          num = num + 1
          mass(i) = xval0(i)
        enddo
-       do i=1,6             
+       do i=1,6
          num = num + 1
          intwidth(i) = xval0(num)
        enddo
@@ -1055,7 +1055,7 @@ c 2007
         wdif = w - (mp + mpi)
         wr = wdif/w
 
-! Calculate kinematics needed for threshold Relativistic B-W 
+! Calculate kinematics needed for threshold Relativistic B-W
         k = (w2 - mp2) / 2. / mp
         kcm = (w2 - mp2) / 2. / w
         epicm = (W2 + mpi**2 -mp2 ) / 2. / w
@@ -1092,7 +1092,7 @@ c make same as resmod507
      &                   (kcmr(i)**2+x0(i)**2)/(kcm**2+x0(i)**2)
           pgam(i) = intwidth(i)*pgam(i)
           width(i) = br(i,1)*pwid(i,1)+br(i,2)*pwid(i,2)
-          sigr(iw,i) = width(i) * pgam(i) / ((W2 - mass(i)**2.)**2. 
+          sigr(iw,i) = width(i) * pgam(i) / ((W2 - mass(i)**2.)**2.
      &            + (mass(i)*width(i))**2.) *
      >            kr(i) / k * kcmr(i) / kcm / intwidth(i)
         enddo ! loop on i
@@ -1138,7 +1138,7 @@ c       enddo
 c       write(9,'(''xval50='',f10.4)') xval(50)
 c       close(unit=9)
       endif ! if first
-      
+
 ! get parameters into local variables
       num = 12
 ! resonance height coefficients. xvals of 13-36
@@ -1149,7 +1149,7 @@ c       close(unit=9)
         enddo
       enddo
 !  Non-Res coefficients xvals of 37-44
-      do i=1,2               
+      do i=1,2
         do j=1,4
           num = num + 1
           nr_coef(i,j)=xval(num)
@@ -1165,20 +1165,20 @@ ccc     &          (1. + q2/0.71)**rescoef(i,4)
 c make same as resmod507
      &          (1. + q2/0.91)**rescoef(i,4)
       enddo
-ccc      dip = 1./(1. + q2 / 0.71)**2  
+ccc      dip = 1./(1. + q2 / 0.71)**2
 c make same as resmod507
-      dip = 1./(1. + q2 / 0.91)**2  
+      dip = 1./(1. + q2 / 0.91)**2
       dip2 = dip**2
-ccc      height(7) = xval(49)*dip2 
+ccc      height(7) = xval(49)*dip2
 c make same as resmod507
-      height(7) = xval(49)*dip 
+      height(7) = xval(49)*dip
       iw = int(1000.*sqrt(w2))
       sig_res = 0.
       do i=1,7
 ccc        sigrsv(i) =  height(i) * sigr(iw,i)
 c make same as resmod507 by squaring height
         sigrsv(i) =  height(i)**2 * sigr(iw,i)
-        sig_res = sig_res + sigrsv(i) 
+        sig_res = sig_res + sigrsv(i)
       enddo
 
 c make same as resmod507
@@ -1193,7 +1193,7 @@ c      xpr = 1.+(w2-(mp+mpi)**2)/(q2+xval(50))
       xpr = 1./xpr
       w = sqrt(w2)
       wdif = w - (mp + mpi)
-      do i=1,2  
+      do i=1,2
         sig_nr = sig_nr +(nr_coef(i,1)*(wdif)**(float(2*i+1)/2.))
      &   /(q2+nr_coef(i,2))**
      &   (nr_coef(i,3)+nr_coef(i,4)*q2+xval(44+i)*q2**2)
@@ -1203,12 +1203,12 @@ c make same as resmod507 by turning this off
 ccc        sig_nr = sig_nr +(xval(2)*(wdif)**0.5)
 ccc     &   /(q2 + xval(3))**
 ccc     &   (xval(4) + xval(5) * q2 + xval(6) * q2**2)
-        
+
       sig_nr = sig_nr * xpr
-     
-! Add third term to try to describe MEC, now using Wdiff in 
+
+! Add third term to try to describe MEC, now using Wdiff in
 ! deuteron rather than proton
-! ** Taken out 10/17/06 
+! ** Taken out 10/17/06
 c     md = 2.*mp
 c     nu = (q2 + w2 - mp2) / 2. / mp
 c     w2p = md**2 + 2. * md * nu - q2
@@ -1225,7 +1225,7 @@ c    >    xprp
 c      endif
 c     sig = sig_res + sig_nr + sig_mec
 
-      sig = sig_res + sig_nr 
+      sig = sig_res + sig_nr
 c      write(6,'(1x,i4,2f7.2,4e10.3)') iw,q2,w2,height(1),
 c     >  sigr(iw,1),sig_res,sig_nr
 
@@ -1233,13 +1233,13 @@ c     >  sigr(iw,1),sig_res,sig_nr
       F1 = sig * (w2-mp2)/8./pi/pi/alpha/0.3894e3
       sig = F1
 
-      RETURN 
-      END 
+      RETURN
+      END
 
 c Fit to proton F1, R, sigma_T, and Sigma_L from
 
       SUBROUTINE christy507(W2,Q2,F1,R,sigt,sigl)
-c   M.E. Christy and P.E. Bosted, ``Empirical Fit to Precision 
+c   M.E. Christy and P.E. Bosted, ``Empirical Fit to Precision
 c    Inclusive Electron-Proton Cross Sections in the Resonance Region'',
 c    (arXiv:0712.3731). To be submitted to Phys. Rev. C.
 
@@ -1248,14 +1248,14 @@ c    (arXiv:0712.3731). To be submitted to Phys. Rev. C.
       real*8 w2,q2,xval1(50),xvall(50),xval(100)
       real*8 mp,mp2,pi,alpha,xb,sigT,sigL,F1,FL,F2,R
       integer i,npts,sf
- 
+
       mp = .9382727
-      mp2 = mp*mp   
+      mp2 = mp*mp
       pi = 3.141593
       alpha = 1./137.036
 
 
-      data xval / 
+      data xval /
 
      & 0.12298E+01,0.15304E+01,0.15057E+01,0.16980E+01,0.16650E+01,
      & 0.14333E+01,0.13573E+00,0.22000E+00,0.82956E-01,0.95782E-01,
@@ -1281,14 +1281,14 @@ c    (arXiv:0712.3731). To be submitted to Phys. Rev. C.
 
       do i=1,50
         xval1(i) = xval(i)
-        xvalL(i) = xval(50+i) 
+        xvalL(i) = xval(50+i)
         if(i.LE.12) xvalL(i) = xval1(i)
       enddo
       xvalL(43) = xval1(47)
       xvalL(44) = xval1(48)
       xvalL(50) = xval1(50)
- 
- 
+
+
       xb = q2/(w2+q2-mp2)
 
       call resmod507(1,w2,q2,xval1,sigT)
@@ -1297,10 +1297,10 @@ c    (arXiv:0712.3731). To be submitted to Phys. Rev. C.
       F1 = sigT*(w2-mp2)/8./pi/pi/alpha/0.3894e3
       FL = sigL*2.*xb*(w2-mp2)/8./pi/pi/alpha/0.3894e3
       R = sigL/sigT
-    
+
       end
 
-      SUBROUTINE RESMOD507(sf,w2,q2,xval,sig) 
+      SUBROUTINE RESMOD507(sf,w2,q2,xval,sig)
 
       IMPLICIT NONE
       REAL*8 W,w2,q2,mp,mp2,mpi2,xb,xth(4),sig,xval(50),mass(7),width(7)
@@ -1334,27 +1334,27 @@ c    (arXiv:0712.3731). To be submitted to Phys. Rev. C.
         q20 = 0.05
       else
         q20 = 0.125
-      endif 
-   
+      endif
+
 
 CCCC   single pion branching ratios  CCCC
 
-      br(1,1) = 1.0       !!!  P33(1232)       
-      br(2,1) = 0.45      !!!  S11(1535)   
+      br(1,1) = 1.0       !!!  P33(1232)
+      br(2,1) = 0.45      !!!  S11(1535)
       br(3,1) = 0.65      !!!  D13(1520)
       br(4,1) = 0.65      !!!  F15(1680)
       br(5,1) = 0.4       !!!  S11(1650)
-      br(6,1) = 0.65      !!!  P11(1440) roper 
+      br(6,1) = 0.65      !!!  P11(1440) roper
       br(7,1) = 0.50      !!!  F37(1950)
 
 CCCC  eta branching ratios   CCCC
 
       br(1,3) = 0.0       !!!  P33(1232)
-      br(2,3) = 0.45      !!!  S11(1535) 
+      br(2,3) = 0.45      !!!  S11(1535)
       br(3,3) = 0.0       !!!  D13(1520)
       br(4,3) = 0.0       !!!  F15(1680)
       br(5,3) = 0.1       !!!  S11(1650)
-      br(6,3) = 0.0       !!!  P11(1440) roper   
+      br(6,3) = 0.0       !!!  P11(1440) roper
       br(7,3) = 0.0       !!!  F37(1950)
 
 CCCC  2-pion branching ratios  CCCC
@@ -1373,7 +1373,7 @@ CCCC   Meson angular momentum   CCCC
       ang(3) = 2.       !!!  D13(1520)
       ang(4) = 3.       !!!  F15(1680)
       ang(5) = 0.       !!!  S15(1650)
-      ang(6) = 1.       !!!  P11(1440) roper   
+      ang(6) = 1.       !!!  P11(1440) roper
       ang(7) = 3.       !!!  F37(1950)
 
       do i=1,7     !!!  resonance damping parameter  !!!
@@ -1382,13 +1382,13 @@ c        x0(i) = xval(50)
       enddo
 
       x0(1) = 0.15
-      x0(1) = xval(50)   
+      x0(1) = xval(50)
 
       do i=1,7
         br(i,2) = 1.-br(i,1)-br(i,3)
       enddo
-           
-    
+
+
       dip = 1./(1.+q2/0.71)**2.             !!!  Dipole parameterization  !!!
       mon = 1./(1.+q2/0.71)**1.
 
@@ -1432,7 +1432,7 @@ CCC    Calculate kinematics needed for threshold Relativistic B-W  CCC
       else
         mass(7) = xval(47)
         intwidth(7) = xval(48)
-        width(7) = intwidth(7) 
+        width(7) = intwidth(7)
       endif
 
       do i=1,7
@@ -1465,8 +1465,8 @@ c         !!!  1-pion decay mode
         if(i.EQ.2.OR.i.EQ.5) then
           pwid(i,3) =  intwidth(i)*(petacm/petacmr(i))**(2.*ang(i)+1.)
      &          *((petacmr(i)**2+x0(i)**2)/(petacm**2+x0(i)**2))**ang(i)
-c         !!!  eta decay only for S11's 
-        endif 
+c         !!!  eta decay only for S11's
+        endif
 
 
 
@@ -1483,7 +1483,7 @@ CCC    End resonance kinematics and Widths calculations   CCC
 
 
 CCC    Begin resonance Q^2 dependence calculations   CCC
-           
+
 
       do i=1,6
         do j=1,4
@@ -1496,7 +1496,7 @@ CCC    Begin resonance Q^2 dependence calculations   CCC
           height(i) = rescoef(i,1)*
      &          (1.+rescoef(i,2)*q2/(1.+rescoef(i,3)*q2))/
      &          (1.+q2/0.91)**rescoef(i,4)
- 
+
         else
 
           height(i) = rescoef(i,1)*q2/(1.+rescoef(i,2)*q2)
@@ -1504,7 +1504,7 @@ CCC    Begin resonance Q^2 dependence calculations   CCC
 
         endif
 
- 
+
         height(i) = height(i)*height(i)
 
       enddo
@@ -1515,7 +1515,7 @@ CCC    Begin resonance Q^2 dependence calculations   CCC
         height(7) = xval(45)*q2/(1.+xval(46)*q2)*exp(-1.*xval(47)*q2)
 
       else
-        height(7) = xval(49)/(1.+q2/0.91)**1. 
+        height(7) = xval(49)/(1.+q2/0.91)**1.
 
       endif
       height(7) = height(7)*height(7)
@@ -1524,7 +1524,7 @@ CCC    Begin resonance Q^2 dependence calculations   CCC
 
 CCC    End resonance Q^2 dependence calculations   CCC
 
-     
+
       do i=1,3               !!!  Non-Res coefficients  !!!
         do j=1,4
           num = num + 1
@@ -1538,11 +1538,11 @@ CCC   Calculate Breit-Wigners for all resonances   CCC
       sig_res = 0.0
 
       do i=1,7
-        sigr(i) = width(i)*pgam(i)/((W2 - mass(i)**2.)**2. 
+        sigr(i) = width(i)*pgam(i)/((W2 - mass(i)**2.)**2.
      &              + (mass(i)*width(i))**2.)
         sigr(i) = height(i)*kr(i)/k*kcmr(i)/kcm*sigr(i)/intwidth(i)
         if(sf.eq.1) sigrsv(i) = sigr(i)
-        sig_res = sig_res + sigr(i)   
+        sig_res = sig_res + sigr(i)
       enddo
 
       sig_res = sig_res*w
@@ -1550,14 +1550,14 @@ CCC   Calculate Breit-Wigners for all resonances   CCC
 
 CCC    Finish resonances / start non-res background calculation   CCC
 
- 
+
       sig_nr = 0.
 
       if(sf.EQ.1) then
 
-        do i=1,2  
+        do i=1,2
 
-          h_nr(i) = nr_coef(i,1)/     
+          h_nr(i) = nr_coef(i,1)/
      &       (q2+nr_coef(i,2))**
      &       (nr_coef(i,3)+nr_coef(i,4)*q2+xval(44+i)*q2**2)
           sig_nr = sig_nr +h_nr(i)*(wdif(1))**(float(2*i+1)/2.)
@@ -1579,34 +1579,34 @@ CCC    Finish resonances / start non-res background calculation   CCC
 
 
       sig = sig_res + sig_nr
-       
+
 
 
  1000  format(8f12.5)
 
-      RETURN 
-      END 
+      RETURN
+      END
 
 
 !---------------------------------------------------------------------
 
-      REAL FUNCTION FITEMC_ROCK(X,A,GOODFIT)       
-!---------------------------------------------------------------------  
-! Fit to EMC effect.  Steve Rock 8/3/94                                 
-! Funciton returns value of sigma(A)/sigma(d) 
+      REAL FUNCTION FITEMC_ROCK(X,A,GOODFIT)
+!---------------------------------------------------------------------
+! Fit to EMC effect.  Steve Rock 8/3/94
+! Funciton returns value of sigma(A)/sigma(d)
 ! with no isoscalerity correction
-! A= atomic number                                                      
-! x = Bjorken x.                                                        
-!                                                                       
-! Fit of sigma(A)/sigma(d) to form C*A**alpha where A is atomic number  
-! First data at each x was fit to form C*A**alpha.  The point A=2(d)    
-!  was includded with a value of 1 and an error of about 2%.             
-! For x>=.125 Javier Gomez fit of 7/93 to E139 data was used.           
-! For .09 >=x>=.0085 NMC data from Amaudruz et al Z. Phys C. 51,387(91) 
+! A= atomic number
+! x = Bjorken x.
+!
+! Fit of sigma(A)/sigma(d) to form C*A**alpha where A is atomic number
+! First data at each x was fit to form C*A**alpha.  The point A=2(d)
+!  was includded with a value of 1 and an error of about 2%.
+! For x>=.125 Javier Gomez fit of 7/93 to E139 data was used.
+! For .09 >=x>=.0085 NMC data from Amaudruz et al Z. Phys C. 51,387(91)
 !  Steve did the fit for alpha and C to the He/d. C/d and Ca/d NMC data.
 ! Alpha(x) was fit to a 9 term polynomial a0 +a1*x +a2*x**2 + a3*x**3 ..
-! C(x) was fit to a 3 term polynomial in natural logs as                
-!  Ln(C) = c0 + c1*Ln(x) + c2*[Ln(x)]**2.                               
+! C(x) was fit to a 3 term polynomial in natural logs as
+!  Ln(C) = c0 + c1*Ln(x) + c2*[Ln(x)]**2.
 
 ! 6/2/98 *****  Bug (which set x= .00885 if x was out of range) fixed
 !                    also gave value at x=.0085 if x>.88
@@ -1615,63 +1615,63 @@ CCC    Finish resonances / start non-res background calculation   CCC
 !    already are taking that into account with the y-smearing of
 !    the inelastic
 !-----------------------------------------------------------------------
-                                                                        
-                                                                        
-      IMPLICIT NONE                                                     
-      INTEGER I                                                         
-      REAL*4 ALPHA, C,LN_C,X,A ,X_U
-      LOGICAL GOODFIT                                  
-                                                                        
-!Chisq=         19.   for 30 points                                     
-!Term    Coeficient     Error                                           
 
-      REAL*8  ALPHA_COEF(2,0:8)    /                                     
-     > -6.98871401D-02,    6.965D-03,                                   
-     >  2.18888887D+00,    3.792D-01,                                   
-     > -2.46673765D+01,    6.302D+00,                                   
-     >  1.45290967D+02,    4.763D+01,                                   
-     > -4.97236711D+02,    1.920D+02,                                   
-     >  1.01312929D+03,    4.401D+02,                                   
-     > -1.20839250D+03,    5.753D+02,                                   
-     >  7.75766802D+02,    3.991D+02,                                   
-     > -2.05872410D+02,    1.140D+02 /                                  
-                                                     
-                              
-!Chisq=         22.    for 30 points                                   
-!Term    Coeficient     Error                                          
-      REAL*8 C_COEF(2,0:2) /        ! Value and error for 6 term fit to 
-     >  1.69029097D-02,    4.137D-03,                                   
-     >  1.80889367D-02,    5.808D-03,                                   
-     >  5.04268396D-03,    1.406D-03   /                                
-                                                                        
-                                                                        
+
+      IMPLICIT NONE
+      INTEGER I
+      REAL*4 ALPHA, C,LN_C,X,A ,X_U
+      LOGICAL GOODFIT
+
+!Chisq=         19.   for 30 points
+!Term    Coeficient     Error
+
+      REAL*8  ALPHA_COEF(2,0:8)    /
+     > -6.98871401D-02,    6.965D-03,
+     >  2.18888887D+00,    3.792D-01,
+     > -2.46673765D+01,    6.302D+00,
+     >  1.45290967D+02,    4.763D+01,
+     > -4.97236711D+02,    1.920D+02,
+     >  1.01312929D+03,    4.401D+02,
+     > -1.20839250D+03,    5.753D+02,
+     >  7.75766802D+02,    3.991D+02,
+     > -2.05872410D+02,    1.140D+02 /
+
+
+!Chisq=         22.    for 30 points
+!Term    Coeficient     Error
+      REAL*8 C_COEF(2,0:2) /        ! Value and error for 6 term fit to
+     >  1.69029097D-02,    4.137D-03,
+     >  1.80889367D-02,    5.808D-03,
+     >  5.04268396D-03,    1.406D-03   /
+
+
       fitemc_rock = 1.
       if(A .lt. 2.5) return
 
-      IF( (X.GT.0.70).OR.(X.LT. 0.0085) ) THEN   !Out of range of fit   
+      IF( (X.GT.0.70).OR.(X.LT. 0.0085) ) THEN   !Out of range of fit
        IF(X.LT. 0.0085) X_U =.0085
        IF(X.GT. 0.70) X_U = 0.70
        GOODFIT=.FALSE.
       ELSE
        X_U=X
        GOODFIT=.TRUE.
-      ENDIF                                                            
-                                                                        
-      LN_C = C_COEF(1,0)                                                
-      DO I =1,2                                                         
-       LN_C = LN_C + C_COEF(1,I) * (ALOG(X_U))**I                         
-      ENDDO                                                             
-                                                                        
-      C = EXP(LN_C)                                                     
-                                                                        
-      ALPHA = ALPHA_COEF(1,0)                                           
-      DO I=1,8                                                          
-       ALPHA = ALPHA + ALPHA_COEF(1,I) * X_U**I                           
-      ENDDO                                                             
-                                                                        
-      FITEMC_ROCK  =  C *A**ALPHA                                            
-      RETURN                                                            
-      END                                                               
+      ENDIF
+
+      LN_C = C_COEF(1,0)
+      DO I =1,2
+       LN_C = LN_C + C_COEF(1,I) * (ALOG(X_U))**I
+      ENDDO
+
+      C = EXP(LN_C)
+
+      ALPHA = ALPHA_COEF(1,0)
+      DO I=1,8
+       ALPHA = ALPHA + ALPHA_COEF(1,I) * X_U**I
+      ENDDO
+
+      FITEMC_ROCK  =  C *A**ALPHA
+      RETURN
+      END
 
       subroutine mec(z,a,q2,w2,f1,f2,xval)
 ! fit to low q2 dip region: purefly empirical
@@ -1683,16 +1683,15 @@ C DG: had to add this to avoid NAN
       f1=0.0
       f2=0.0
       if(w2.lt.0.0) return
-C DG end addtion 
+C DG end addtion
       w = sqrt(w2)
       nu = (w2 - am**2 + q2) / 2. / am
 
 ! changed to use max(0.3,q2)
       f1 = xval(1) * exp(-(w - xval(2))**2/xval(3)) /
      >   (1. + max(0.3,q2) / xval(4))**xval(5) * nu ** xval(6)
-      
+
       f2 = 0.
-      if(q2.gt.0.) f2 = nu * (f1/am) / (1. + nu**2 / q2) 
+      if(q2.gt.0.) f2 = nu * (f1/am) / (1. + nu**2 / q2)
       return
       end
-

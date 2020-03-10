@@ -23,7 +23,7 @@ C+______________________________________________________________________________
 !   Solving for D and B with the above points yields D = 4.9000, B=14.162.
 !   Parameter C is then determined from the normalization of F. It has the
 !   value: C = 0.1821. The parameter Y0 is calculated from an ad hoc expression
-!   for the fermi momentum, exactly as in McKeown's subroutine.
+!   for the fermi momentum, exactly as in McKeown`s subroutine.
 !
 ! USAGE:
 !
@@ -97,7 +97,7 @@ C compute F(Y).  B,C,D are PASSED to fy.
 !!! quick test - this is better for 15 degrees.
 !!!	fy = (.8*c)*exp(-0.5*(y/Y0)**2)/Y0 + (.8*d)/(exp((.8*b)*y)+exp(-(.8*b)*y))
 
-! Claudio/West's version: test for deuterium
+! Claudio/West`s version: test for deuterium
 
 !	f0=.0083
 !	bigB=.000213
@@ -122,7 +122,7 @@ C compute F(Y).  B,C,D are PASSED to fy.
 !	if(bigB.gt.0.0) then
 !	   fy = (f0-bigB)*alpha**2*exp(-(a*y)**2)/(alpha**2+y**2)+bigB*exp(-b*abs(y))
 !	change of shape for nuclear targets
-	
+
 	if(a_num.eq.2.) then
 	   fy = (f0-bigB)*alpha**2*exp(-(a*y)**2)/(alpha**2+y**2)+bigB*
      >  	exp(-b*abs(y))

@@ -1,24 +1,29 @@
 	subroutine bdisnew4he3(eic1,ep1,theta1,aa1,zz1,ann1,esep1,pmax1,
-     &	innt1,innp1,f01,bigB1,ag1,bg1,alpha1,sigdeep)
+     &	innt1,innp1,f01,bigB1,ag1,bg1,alpha1,sigdeep,SIG_MODEL)
 
-        implicit none
+       implicit none
+c	     include 'include.inc'
+c				COMMON/IKK12/IG,IDUT,INEL_MODEL,SIG_MODEL
+c				INTEGER IG,IDUT,INEL_MODEL,SIG_MODEL
 c	implicit real*8 (a-z)
-	real*8 wp,ww1,ww2, w11, w22, nu,p, amuM
-	real*8 eic1,ep1,theta1,aa1,zz1,ann1,esep1,pmax1
-        real*8  innt1,innp1,ag1,bg1,cg1,dg1,sigdeep
+	     real*8 wp,ww1,ww2, w11, w22, nu,p, amuM
+	     real*8 eic1,ep1,theta1,aa1,zz1,ann1,esep1,pmax1
+       	real*8  innt1,innp1,ag1,bg1,cg1,dg1,sigdeep
 c	modified version of BWF's routine bdis
 c	ag,bg,cg,dg are coeff of a 2 gaussian fit to the f(y)
 c	which was converted to n(k)
 	real*8 rk,rho
 	real*8 rq2		!to pass to w1w2
 
-        integer inp
+        integer inp,SIG_MODEL
+
         real*8 f01,bigB1,alpha1,thec
-        real*8 eic,ep,aa,zz,ann,esep,pmax
-        real*8 innt,innp,ag,bg,f0,BigB,alpha
+        real*8 eic,ep,aa,zz,ann,esep,pmax !aa,
+        real*8 ag,bg,f0,BigB,alpha,innt,innp
         real*8 agd,bgd,cgd,dgd
         real*8 theta,pi,s2,anu,q2,amp,x,amp2
-        real*8 amn,ama_1,q3,W1_ineft,W2_ineft
+        real*8 amn,ama_1,q3
+				real*8 W1p_ineft,W2p_ineft,W1d_ineft,W2d_ineft,W1n_ineft,W2n_ineft
         real*8 w1ap,w2ap,w1an,w2an
         real*8 w1ap1,w2ap1,w1an1,w2an1
         real*8 w1,w2,w1a,w2a,sigm,tt2
@@ -81,7 +86,7 @@ c	alpha=real(alpha1)
 	  bgd =   0.60049E+02
 	  cgd =   0.38390E+00
 	  dgd =   0.13421E+02
-        elseif ((aa .eq. 12).or.(aa.eq.9)) then      !carbon
+        elseif ((aa .eq. 12).or.(aa1.eq.9)) then      !carbon
 	  agd =   0.28757E+01
 	  bgd =   0.41922E+02
 	  cgd =   0.33801E+00
@@ -91,7 +96,7 @@ c	alpha=real(alpha1)
 	  bgd =   0.36962E+02
 	  cgd =   0.41675E+00
 	  dgd =   0.13772E+02
-        elseif ((aa .eq. 56).or.(aa.eq.64))then      !iron
+        elseif ((aa .eq. 56).or.(aa1.eq.64))then      !iron
 	  agd =   0.28316E+01
 	  bgd =    0.44624E+02
 	  cgd =    0.37850E+00
@@ -146,7 +151,7 @@ c	write(6,*)eic,ep,thec,esep,q2, rq2,
 	amn = 0.939565
 	if(aa.eq.2) then
 	  ama_1=0.93827
-	elseif(aa .gt. 2 .and. aa .lt. 4)then !he3
+	elseif(aa .gt. 2 .and. aa1 .lt. 4)then !he3
 	  ama_1 = 1.87609
 	elseif (aa.eq.4) then
 	  ama_1 = 2.8094
@@ -158,34 +163,24 @@ c	write(6,*)eic,ep,thec,esep,q2, rq2,
 	  ama_1 = 24.205
 	elseif (aa.eq.56) then
 	  ama_1 = 51.1743
-c	elseif (aa.eq.63) then
+c	elseif (aa1.eq.63) then
 	elseif (aa.eq.64) then
 	  ama_1 = 57.6886
 	elseif (aa.eq.197) then
 	  ama_1 = 182.5394
 	endif
 	ama = ama_1 + amp - esep
-c	write (6,*) 'ama_1 is ', ama_1,ama
-c
+
 	q3 = sqrt(q2 +anu*anu)
 	w1ap = 0.0
 	w2ap = 0.0
 	w1an = 0.0
 	w2an = 0.0
 	du = 2./innt
-	akf = (1. - exp(-aa/8.))*.22 + 0.04
+	akf = (1. - exp(-aa1/8.))*.22 + 0.04
 c
 	dp = pmax/innp
-c
-c	calculate proton and neutron free structure functions as a check if
-c	desired
-c	inp = 1
-c	w0 = sqrt(amp2 + 2.*amp*amu - q2)
-c	call w1w2(q2,w0,w1,w2,inp)
-c	w2p = w2
-c	inp = 2
-c	call w1w2(q2,w0,w1,w2,inp)
-c	w2n = w2
+
 	wp_max = 0.0
 c	do smearing correction
 	do ip = 1,innp
@@ -234,21 +229,23 @@ cdg	    endif
 c	    write(*,*) 'my nu is ', nu, wp**2, q2, rq2
 cdg	    call w1w2(rq2,wp,w1,w2,inp)
 
-c Get F1,F2 for the proton at Q2 and w2
-	    call F1F2IN06(1.D0,1.D0,rq2,wp**2,w11,w22)
-c	    call F1F2IN09(1.D0,1.D0,rq2,wp**2,w11,w22,r)
-	    if((w11.eq.0).or.(w22.eq.0)) goto 10
-	    w11=w11/amp
-	    w22=w22/nu
+c Get F1,F2 for the proton at Q2 and w2,
+c			if(iu*ip.eq.1) write(6,*) "Checking sig model bdis ", SIG_MODEL
+			if(SIG_MODEL.eq.1) then
+	    	call F1F2IN06(1.D0,1.D0,rq2,wp**2,w11,w22)
+				if((w11.eq.0).or.(w22.eq.0)) goto 10
+		    w11=w11/amp
+		    w22=w22/nu
+			elseif(SIG_MODEL.eq.3) then
+				call INEFT(Q2,wp**2,W1p_ineft,W2p_ineft,dble(1.0))
+				w11= W1p_ineft
+				w22= W2p_ineft
+	    endif
 
 	    w1=w11
 	    w2=w22
-			W1_ineft=0.0
-			W2_ineft=0.0
+
 c write (6,*) 'ama_1 is ', ama_1,ama,Q2
-
-c			call INEFT(Q2,W1_ineft,W2_ineft,ama)
-
 c			write(6,*)"poo ", W1_ineft, W1, W2_ineft, W2, x,ama
 
 
@@ -265,14 +262,24 @@ c       errorinBR	arg21 = (1. - p*u*q2/amp/anup/q3)*anup*anup/anu/anu
 cdg	    call w1w2(rq2,wp,w1,w2,inp)
 	    w11=0.
 	    w22=0.
-	    call F1F2IN06(0.D0,1.D0,rq2,wp**2,w11,w22)
-c	    call F1F2IN09(0.D0,1.D0,rq2,wp**2,w11,w22,r)
-	    if((w11.eq.0).or.(w22.eq.0)) goto 10
-	    w11=w11/amp
-	    w22=w22/nu
+			if(SIG_MODEL.eq.1) then
+	    	call F1F2IN06(0.D0,1.D0,rq2,wp**2,w11,w22)
+				if((w11.eq.0).or.(w22.eq.0)) goto 10
+		    w11=w11/amp
+		    w22=w22/nu
+			elseif(SIG_MODEL.eq.3) then
+				call INEFT(Q2,wp**2,W1d_ineft,W2d_ineft,dble(2.0))
+c  use the proton W and d W to find n w
+				W1n_ineft = 2.0*W1d_ineft - W1p_ineft
+				w2n_ineft = 2.0*W2d_ineft - W2p_ineft
 
-	    w1=w11
-	    w2=w22
+				w11 = W1n_ineft
+				w22 = W2n_ineft
+c				write(6,*) "Sig model 3 = ", sig_model
+	    endif
+			w1=w11
+			w2=w22
+
 
 	    arg1 = w1 + (1 -u*u)*p*p*w2/2./amp2
 c       errorinBR	arg21 = (1. - p*u*q2/amp/anup/q3)*anup*anup/anu/anu
@@ -284,14 +291,10 @@ c       errorinBR	arg21 = (1. - p*u*q2/amp/anup/q3)*anup*anup/anu/anu
 c
  10	  continue
 
-
-
 	  weight1 = ((exp(-(ag*p)**2)*(f0-bigB)*alpha**2)*(((ag**2)
 	1   *(alpha**2+p**2)+1)/(alpha**2+p**2)**2))
 
-
-
-	  if (aa.eq.2) then
+	  if (aa1.eq.2) then
 	    if(p.lt.0) then
 	      weight1=weight1-(bg*bigB*exp(-bg*abs(p))/(2*p))
 	    else
@@ -300,7 +303,6 @@ c
 	  else
 	      weight1=weight1+(bg**2*bigB*exp(-(bg*p)**2))
 	  endif
-
 
 	  weight1=weight1*p*p*dp/pi!*2.48176
 

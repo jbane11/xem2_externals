@@ -177,6 +177,7 @@ c              F1= pm*(F2/nu)*(1.0+nu/qsq)/(1.0+ra)
            endif
 
         ENDIF
+c        for large invariant mass
 
       END
 
